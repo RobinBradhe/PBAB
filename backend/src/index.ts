@@ -4,6 +4,7 @@ import dotenv from 'dotenv'
 import { initSchema } from './database/schema'
 import authRouter from './routes/auth'
 import settingsRouter from './routes/settings'
+import usersRouter from './routes/users'
 
 dotenv.config()
 
@@ -17,6 +18,7 @@ initSchema()
 
 app.use('/api/auth', authRouter)
 app.use('/api/settings', settingsRouter)
+app.use('/api/users', usersRouter)
 
 app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok' })

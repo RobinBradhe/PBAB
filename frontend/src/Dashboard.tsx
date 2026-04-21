@@ -1,6 +1,7 @@
 import { Routes, Route, NavLink } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import Granssnitt from './pages/Granssnitt'
+import Anvandare from './pages/Anvandare'
 import './Dashboard.css'
 
 type Theme = 'default' | 'green' | 'purple' | 'amber' | 'red'
@@ -51,6 +52,7 @@ export default function Dashboard({ username, role, onLogout, currentTheme, onTh
 
       <Routes>
         <Route path="/" element={<Overview t={t} />} />
+        <Route path="/anvandare" element={<Anvandare />} />
         <Route path="/granssnitt" element={<Granssnitt currentTheme={currentTheme} onThemeChange={onThemeChange} />} />
       </Routes>
     </div>

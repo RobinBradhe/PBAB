@@ -17,8 +17,16 @@ export function initSchema() {
     );
   `)
 
+  migrateUsers()
   seedDefaultUsers()
   seedDefaultSettings()
+}
+
+function migrateUsers() {
+  const cols = ['first_name', 'last_name', 'email', 'phone']
+  for (const col of cols) {
+    try { db.exec(`ALTER TABLE users ADD COLUMN ${col} TEXT`) } catch {}
+  }
 }
 
 function seedDefaultSettings() {

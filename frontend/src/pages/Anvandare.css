@@ -1,0 +1,236 @@
+.users-body {
+  padding: 28px 32px;
+  overflow-x: auto;
+}
+
+/* Table */
+.users-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.users-table th {
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  padding: 0 16px 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+.users-table td {
+  padding: 14px 16px;
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border);
+}
+
+.users-table tr:last-child td { border-bottom: none; }
+
+.users-table tr:hover td { background: var(--bg-hover); }
+
+.td-muted { color: var(--text-secondary) !important; }
+
+.td-actions {
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* Header */
+.dashboard-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.add-btn {
+  background: var(--accent);
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 16px;
+  transition: background 0.15s;
+}
+
+.add-btn:hover { background: var(--accent-hover); }
+
+/* Row buttons */
+.row-btn {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 13px;
+  margin-left: 6px;
+  padding: 4px 9px;
+  transition: all 0.15s;
+}
+
+.row-btn:hover { border-color: var(--accent); color: var(--accent-text); }
+
+.row-btn-danger:hover { border-color: #6b2525; color: #f08080; background: #1f1010; }
+
+/* Role badge */
+.role-badge {
+  border-radius: 5px;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.role-admin { background: var(--accent-subtle); color: var(--accent-text); }
+.role-staff { background: var(--bg-hover); color: var(--text-secondary); }
+
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.modal {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 32px;
+  width: 100%;
+  max-width: 560px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-sm { max-width: 400px; }
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.modal-title {
+  color: var(--text-primary);
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.modal-close-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+  padding: 4px 6px;
+  border-radius: 6px;
+  transition: all 0.15s;
+}
+
+.modal-close-btn:hover { background: var(--bg-hover); color: var(--text-primary); }
+
+.modal-text {
+  color: var(--text-secondary);
+  font-size: 14px;
+  margin: 0 0 24px;
+}
+
+.modal-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.form-field-full { grid-column: 1 / -1; }
+
+.label-hint {
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 400;
+}
+
+.password-row {
+  display: flex;
+  gap: 8px;
+}
+
+.password-row .form-input { flex: 1; }
+
+.gen-btn {
+  background: var(--bg-hover);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 12px;
+  padding: 0 12px;
+  white-space: nowrap;
+  transition: all 0.15s;
+}
+
+.gen-btn:hover { border-color: var(--accent); color: var(--accent-text); }
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.cancel-btn {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 14px;
+  padding: 9px 20px;
+  transition: all 0.15s;
+}
+
+.cancel-btn:hover { border-color: var(--border-strong); color: var(--text-primary); }
+
+.save-btn {
+  background: var(--accent);
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 9px 24px;
+  transition: background 0.15s;
+}
+
+.save-btn:hover { background: var(--accent-hover); }
+
+.delete-btn {
+  background: #c83c3c;
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 9px 24px;
+  transition: background 0.15s;
+}
+
+.delete-btn:hover { background: #b02e2e; }
