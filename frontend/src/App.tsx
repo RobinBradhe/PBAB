@@ -6,9 +6,15 @@ import './App.css'
 
 const API = 'http://localhost:3000/api'
 
+type Theme = 'default' | 'green' | 'purple' | 'amber' | 'red'
+
 interface User {
   username: string
   role: string
+}
+
+function applyTheme(theme: Theme) {
+  document.documentElement.setAttribute('data-theme', theme === 'default' ? '' : theme)
 }
 
 function getTokenExpiry(token: string): number | null {
@@ -40,7 +46,18 @@ function loadSession(): User | null {
 
 export default function App() {
   const [user, setUser] = useState<User | null>(loadSession)
+  const [theme, setTheme] = useState<Theme>('default')
   const logoutTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  useEffect(() => {
+    fetch(`${API}/settings/theme`)
+      .then(r => r.json())
+      .then(data => {
+        setTheme(data.theme)
+        applyTheme(data.theme)
+      })
+      .catch(() => {})
+  }, [])
 
   function scheduleAutoLogout(token: string) {
     const expiry = getTokenExpiry(token)
@@ -63,6 +80,11 @@ export default function App() {
     setUser(null)
   }
 
+  function handleThemeChange(newTheme: Theme) {
+    setTheme(newTheme)
+    applyTheme(newTheme)
+  }
+
   useEffect(() => {
     const token = localStorage.getItem('token')
     if (token && user) scheduleAutoLogout(token)
@@ -75,8 +97,10 @@ export default function App() {
         <Route path="/" element={
           user ? <Navigate to="/dashboard" replace /> : <LoginPage onLogin={handleLogin} />
         } />
-        <Route path="/dashboard" element={
-          user ? <Dashboard username={user.username} role={user.role} onLogout={handleLogout} /> : <Navigate to="/" replace />
+        <Route path="/dashboard/*" element={
+          user
+            ? <Dashboard username={user.username} role={user.role} onLogout={handleLogout} currentTheme={theme} onThemeChange={handleThemeChange} />
+            : <Navigate to="/" replace />
         } />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

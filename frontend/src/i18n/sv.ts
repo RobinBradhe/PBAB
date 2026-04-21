@@ -13,6 +13,7 @@ export default {
     bookings: 'Bokningar',
     prices: 'Priser',
     users: 'Användare',
+    interface: 'Gränssnitt',
   },
   dashboard: {
     pageTitle: 'Översikt',
@@ -25,5 +26,18 @@ export default {
   },
   user: {
     logout: 'Logga ut',
+  },
+  interface: {
+    pageTitle: 'Gränssnitt',
+    themeLabel: 'Tema',
+    save: 'Spara',
+    saved: 'Sparat!',
+    themes: {
+      default: 'Standard',
+      green: 'Grön',
+      purple: 'Lila',
+      amber: 'Amber',
+      red: 'Röd',
+    },
   },
 }

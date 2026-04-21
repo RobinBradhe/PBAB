@@ -1,0 +1,103 @@
+.page-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+}
+
+.settings-body {
+  padding: 28px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  max-width: 600px;
+}
+
+.settings-section {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.settings-label {
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+
+.theme-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.theme-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 14px;
+  padding: 12px 16px;
+  color: var(--text-secondary);
+  transition: border-color 0.15s, background 0.15s;
+  min-width: 130px;
+}
+
+.theme-card:hover {
+  border-color: var(--theme-color);
+  color: var(--text-primary);
+}
+
+.theme-card.selected {
+  border-color: var(--theme-color);
+  background: color-mix(in srgb, var(--theme-color) 10%, var(--bg-surface));
+  color: var(--text-primary);
+}
+
+.theme-swatch {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--theme-color);
+  flex-shrink: 0;
+}
+
+.theme-name {
+  flex: 1;
+}
+
+.theme-check {
+  color: var(--theme-color);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.save-btn {
+  align-self: flex-start;
+  background: var(--accent);
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 10px 28px;
+  transition: background 0.15s;
+}
+
+.save-btn:hover:not(:disabled) {
+  background: var(--accent-hover);
+}
+
+.save-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

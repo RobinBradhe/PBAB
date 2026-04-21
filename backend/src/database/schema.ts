@@ -10,9 +10,22 @@ export function initSchema() {
       role      TEXT    NOT NULL CHECK(role IN ('admin', 'staff')),
       created_at TEXT   NOT NULL DEFAULT (datetime('now'))
     );
+
+    CREATE TABLE IF NOT EXISTS settings (
+      key   TEXT PRIMARY KEY,
+      value TEXT NOT NULL
+    );
   `)
 
   seedDefaultUsers()
+  seedDefaultSettings()
+}
+
+function seedDefaultSettings() {
+  const exists = db.prepare("SELECT 1 FROM settings WHERE key = 'theme'").get()
+  if (!exists) {
+    db.prepare("INSERT INTO settings (key, value) VALUES ('theme', 'default')").run()
+  }
 }
 
 function seedDefaultUsers() {

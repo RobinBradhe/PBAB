@@ -13,6 +13,7 @@ export default {
     bookings: 'Bookings',
     prices: 'Prices',
     users: 'Users',
+    interface: 'Interface',
   },
   dashboard: {
     pageTitle: 'Overview',
@@ -25,5 +26,18 @@ export default {
   },
   user: {
     logout: 'Log out',
+  },
+  interface: {
+    pageTitle: 'Interface',
+    themeLabel: 'Theme',
+    save: 'Save',
+    saved: 'Saved!',
+    themes: {
+      default: 'Default',
+      green: 'Green',
+      purple: 'Purple',
+      amber: 'Amber',
+      red: 'Red',
+    },
   },
 }

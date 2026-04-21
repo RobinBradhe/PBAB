@@ -1,13 +1,19 @@
+import { Routes, Route, NavLink } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import Granssnitt from './pages/Granssnitt'
 import './Dashboard.css'
+
+type Theme = 'default' | 'green' | 'purple' | 'amber' | 'red'
 
 interface Props {
   username: string
   role: string
   onLogout: () => void
+  currentTheme: Theme
+  onThemeChange: (theme: Theme) => void
 }
 
-export default function Dashboard({ username, role, onLogout }: Props) {
+export default function Dashboard({ username, role, onLogout, currentTheme, onThemeChange }: Props) {
   const { t, i18n } = useTranslation()
 
   return (
@@ -18,10 +24,11 @@ export default function Dashboard({ username, role, onLogout }: Props) {
           <span className="logo-sub">AB</span>
         </div>
         <nav className="sidebar-nav">
-          <a className="nav-item active">{t('nav.overview')}</a>
-          <a className="nav-item">{t('nav.bookings')}</a>
-          <a className="nav-item">{t('nav.prices')}</a>
-          {role === 'admin' && <a className="nav-item">{t('nav.users')}</a>}
+          <NavLink to="/dashboard" end className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}>{t('nav.overview')}</NavLink>
+          <NavLink to="/dashboard/bokningar" className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}>{t('nav.bookings')}</NavLink>
+          <NavLink to="/dashboard/priser" className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}>{t('nav.prices')}</NavLink>
+          {role === 'admin' && <NavLink to="/dashboard/anvandare" className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}>{t('nav.users')}</NavLink>}
+          {role === 'admin' && <NavLink to="/dashboard/granssnitt" className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}>{t('nav.interface')}</NavLink>}
         </nav>
         <div className="sidebar-bottom">
           <div className="lang-bar">
@@ -39,35 +46,42 @@ export default function Dashboard({ username, role, onLogout }: Props) {
         </div>
       </aside>
 
-      <main className="dashboard-main">
-        <header className="dashboard-header">
-          <h1 className="page-title">{t('dashboard.pageTitle')}</h1>
-        </header>
-
-        <div className="stat-cards">
-          <div className="stat-card">
-            <div className="stat-label">{t('dashboard.todayBookings')}</div>
-            <div className="stat-value">—</div>
-          </div>
-          <div className="stat-card">
-            <div className="stat-label">{t('dashboard.upcomingBookings')}</div>
-            <div className="stat-value">—</div>
-          </div>
-          <div className="stat-card">
-            <div className="stat-label">{t('dashboard.availableSpaces')}</div>
-            <div className="stat-value">—</div>
-          </div>
-          <div className="stat-card">
-            <div className="stat-label">{t('dashboard.monthlyRevenue')}</div>
-            <div className="stat-value">—</div>
-          </div>
-        </div>
-
-        <div className="dashboard-section">
-          <h2 className="section-title">{t('dashboard.recentBookings')}</h2>
-          <div className="empty-state">{t('dashboard.noBookings')}</div>
-        </div>
-      </main>
+      <Routes>
+        <Route path="/" element={<Overview t={t} />} />
+        <Route path="/granssnitt" element={<Granssnitt currentTheme={currentTheme} onThemeChange={onThemeChange} />} />
+      </Routes>
     </div>
+  )
+}
+
+function Overview({ t }: { t: (key: string) => string }) {
+  return (
+    <main className="dashboard-main">
+      <header className="dashboard-header">
+        <h1 className="page-title">{t('dashboard.pageTitle')}</h1>
+      </header>
+      <div className="stat-cards">
+        <div className="stat-card">
+          <div className="stat-label">{t('dashboard.todayBookings')}</div>
+          <div className="stat-value">—</div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-label">{t('dashboard.upcomingBookings')}</div>
+          <div className="stat-value">—</div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-label">{t('dashboard.availableSpaces')}</div>
+          <div className="stat-value">—</div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-label">{t('dashboard.monthlyRevenue')}</div>
+          <div className="stat-value">—</div>
+        </div>
+      </div>
+      <div className="dashboard-section">
+        <h2 className="section-title">{t('dashboard.recentBookings')}</h2>
+        <div className="empty-state">{t('dashboard.noBookings')}</div>
+      </div>
+    </main>
   )
 }

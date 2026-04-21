@@ -3,6 +3,7 @@ import cors from 'cors'
 import dotenv from 'dotenv'
 import { initSchema } from './database/schema'
 import authRouter from './routes/auth'
+import settingsRouter from './routes/settings'
 
 dotenv.config()
 
@@ -15,6 +16,7 @@ app.use(express.json())
 initSchema()
 
 app.use('/api/auth', authRouter)
+app.use('/api/settings', settingsRouter)
 
 app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok' })
