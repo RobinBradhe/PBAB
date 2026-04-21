@@ -1,5 +1,6 @@
 import { Router, Request, Response } from 'express'
 import bcrypt from 'bcrypt'
+import jwt from 'jsonwebtoken'
 import db from '../database/db'
 
 const router = Router()
@@ -21,7 +22,10 @@ router.post('/login', (req: Request, res: Response) => {
     return
   }
 
-  res.json({ id: user.id, username: user.username, role: user.role })
+  const secret = process.env.JWT_SECRET!
+  const token = jwt.sign({ id: user.id, username: user.username, role: user.role }, secret, { expiresIn: '8h' })
+
+  res.json({ token, username: user.username, role: user.role })
 })
 
 export default router
