@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import Dashboard from './Dashboard'
@@ -11,8 +11,26 @@ interface User {
   role: string
 }
 
+function getTokenExpiry(token: string): number | null {
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]))
+    return typeof payload.exp === 'number' ? payload.exp * 1000 : null
+  } catch {
+    return null
+  }
+}
+
 function loadSession(): User | null {
   try {
+    const token = localStorage.getItem('token')
+    if (token) {
+      const expiry = getTokenExpiry(token)
+      if (expiry && Date.now() >= expiry) {
+        localStorage.removeItem('session')
+        localStorage.removeItem('token')
+        return null
+      }
+    }
     const raw = localStorage.getItem('session')
     return raw ? JSON.parse(raw) : null
   } catch {
@@ -22,6 +40,16 @@ function loadSession(): User | null {
 
 export default function App() {
   const [user, setUser] = useState<User | null>(loadSession)
+  const logoutTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  function scheduleAutoLogout(token: string) {
+    const expiry = getTokenExpiry(token)
+    if (!expiry) return
+    const delay = expiry - Date.now()
+    if (delay <= 0) { handleLogout(); return }
+    if (logoutTimer.current) clearTimeout(logoutTimer.current)
+    logoutTimer.current = setTimeout(handleLogout, delay)
+  }
 
   function handleLogin(user: User) {
     localStorage.setItem('session', JSON.stringify(user))
@@ -29,10 +57,17 @@ export default function App() {
   }
 
   function handleLogout() {
+    if (logoutTimer.current) clearTimeout(logoutTimer.current)
     localStorage.removeItem('session')
     localStorage.removeItem('token')
     setUser(null)
   }
+
+  useEffect(() => {
+    const token = localStorage.getItem('token')
+    if (token && user) scheduleAutoLogout(token)
+    return () => { if (logoutTimer.current) clearTimeout(logoutTimer.current) }
+  }, [user])
 
   return (
     <BrowserRouter>
