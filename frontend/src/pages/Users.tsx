@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { authFetch } from '../api'
-import './Anvandare.css'
+import './Users.css'
 
 interface User {
   id: number
@@ -20,7 +20,7 @@ function generatePassword(): string {
   return Array.from({ length: 12 }, () => chars[Math.floor(Math.random() * chars.length)]).join('')
 }
 
-export default function Anvandare({ role }: { role: string }) {
+export default function Users({ role }: { role: string }) {
   const { t } = useTranslation()
   const isAdmin = role === 'admin'
   const [users, setUsers] = useState<User[]>([])

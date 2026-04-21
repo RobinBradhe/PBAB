@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { authFetch } from '../api'
 import { THEMES, type Theme } from '../constants'
-import './Granssnitt.css'
+import './Interface.css'
 
 const THEME_COLORS: Record<Theme, string> = {
   default: '#4f6ef7',
@@ -17,7 +17,7 @@ interface Props {
   onThemeChange: (theme: Theme) => void
 }
 
-export default function Granssnitt({ currentTheme, onThemeChange }: Props) {
+export default function Interface({ currentTheme, onThemeChange }: Props) {
   const { t } = useTranslation()
   const [selected, setSelected] = useState<Theme>(currentTheme)
   const [saved, setSaved] = useState(false)
