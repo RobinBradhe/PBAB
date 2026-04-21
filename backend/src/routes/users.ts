@@ -30,11 +30,14 @@ router.put('/:id', requireAdmin, (req: AuthRequest, res: Response) => {
   const { username, password, role, first_name, last_name, email, phone } = req.body
   if (role && !['admin', 'staff'].includes(role)) { res.status(400).json({ error: 'Invalid role' }); return }
 
-  if (password) {
-    db.prepare('UPDATE users SET password = ? WHERE id = ?').run(bcrypt.hashSync(password, 10), id)
-  }
-  db.prepare('UPDATE users SET username = COALESCE(?, username), role = COALESCE(?, role), first_name = ?, last_name = ?, email = ?, phone = ? WHERE id = ?')
-    .run(username ?? null, role ?? null, first_name ?? null, last_name ?? null, email ?? null, phone ?? null, id)
+  const hash = password ? bcrypt.hashSync(password, 10) : null
+  db.prepare(`UPDATE users SET
+    username = COALESCE(?, username),
+    role = COALESCE(?, role),
+    first_name = ?, last_name = ?, email = ?, phone = ?,
+    password = CASE WHEN ? IS NOT NULL THEN ? ELSE password END
+    WHERE id = ?`)
+    .run(username ?? null, role ?? null, first_name ?? null, last_name ?? null, email ?? null, phone ?? null, hash, hash, id)
 
   const user = db.prepare('SELECT id, username, role, first_name, last_name, email, phone FROM users WHERE id = ?').get(id)
   res.json(user)

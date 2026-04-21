@@ -2,9 +2,8 @@ import { Routes, Route, NavLink } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import Granssnitt from './pages/Granssnitt'
 import Anvandare from './pages/Anvandare'
+import { LANGUAGES, type Theme } from './constants'
 import './Dashboard.css'
-
-type Theme = 'default' | 'green' | 'purple' | 'amber' | 'red'
 
 interface Props {
   username: string
@@ -33,7 +32,7 @@ export default function Dashboard({ username, role, onLogout, currentTheme, onTh
         </nav>
         <div className="sidebar-bottom">
           <div className="lang-bar">
-            {(['sv','en','fa','lv','pl'] as const).map(lang => (
+            {LANGUAGES.map(lang => (
               <button key={lang} className={`lang-btn${i18n.language === lang ? ' active' : ''}`} onClick={() => i18n.changeLanguage(lang)}>
                 {lang.toUpperCase()}
               </button>

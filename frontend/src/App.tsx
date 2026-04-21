@@ -2,11 +2,9 @@ import { useState, useEffect, useRef } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import Dashboard from './Dashboard'
+import { API } from './api'
+import { LANGUAGES, type Theme } from './constants'
 import './App.css'
-
-const API = 'http://localhost:3000/api'
-
-type Theme = 'default' | 'green' | 'purple' | 'amber' | 'red'
 
 interface User {
   username: string
@@ -142,7 +140,7 @@ function LoginPage({ onLogin }: { onLogin: (user: User) => void }) {
   return (
     <div className="login-wrapper">
       <div className="login-lang-bar">
-        {(['sv','en','fa','lv','pl'] as const).map(lang => (
+        {LANGUAGES.map(lang => (
           <button key={lang} className={`lang-btn${i18n.language === lang ? ' active' : ''}`} onClick={() => i18n.changeLanguage(lang)}>
             {lang.toUpperCase()}
           </button>

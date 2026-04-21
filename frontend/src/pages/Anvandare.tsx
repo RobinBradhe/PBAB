@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
+import { authFetch } from '../api'
 import './Anvandare.css'
-
-const API = 'http://localhost:3000/api'
 
 interface User {
   id: number
@@ -32,7 +31,7 @@ export default function Anvandare() {
   useEffect(() => { fetchUsers() }, [])
 
   async function fetchUsers() {
-    const res = await fetch(`${API}/users`, { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } })
+    const res = await authFetch('/users')
     setUsers(await res.json())
   }
 
@@ -64,10 +63,10 @@ export default function Anvandare() {
 
   async function handleSave() {
     const method = modal === 'add' ? 'POST' : 'PUT'
-    const url = modal === 'add' ? `${API}/users` : `${API}/users/${selected!.id}`
-    await fetch(url, {
+    const path = modal === 'add' ? '/users' : `/users/${selected!.id}`
+    await authFetch(path, {
       method,
-      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('token')}` },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(form),
     })
     await fetchUsers()
@@ -75,10 +74,7 @@ export default function Anvandare() {
   }
 
   async function handleDelete() {
-    await fetch(`${API}/users/${selected!.id}`, {
-      method: 'DELETE',
-      headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
-    })
+    await authFetch(`/users/${selected!.id}`, { method: 'DELETE' })
     await fetchUsers()
     closeModal()
   }

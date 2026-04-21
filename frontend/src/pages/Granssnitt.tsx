@@ -1,11 +1,8 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { authFetch } from '../api'
+import { THEMES, type Theme } from '../constants'
 import './Granssnitt.css'
-
-const API = 'http://localhost:3000/api'
-
-const THEMES = ['default', 'green', 'purple', 'amber', 'red'] as const
-type Theme = typeof THEMES[number]
 
 const THEME_COLORS: Record<Theme, string> = {
   default: '#4f6ef7',
@@ -29,12 +26,9 @@ export default function Granssnitt({ currentTheme, onThemeChange }: Props) {
   async function handleSave() {
     setSaving(true)
     try {
-      await fetch(`${API}/settings/theme`, {
+      await authFetch('/settings/theme', {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ theme: selected }),
       })
       onThemeChange(selected)

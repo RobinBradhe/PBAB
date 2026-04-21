@@ -9,9 +9,9 @@ import usersRouter from './routes/users'
 dotenv.config()
 
 const app = express()
-const PORT = process.env.PORT || 3000
+const PORT = Number(process.env.PORT) || 3000
 
-app.use(cors())
+app.use(cors({ origin: 'http://localhost:5173' }))
 app.use(express.json())
 
 initSchema()
@@ -24,6 +24,6 @@ app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok' })
 })
 
-app.listen(PORT, () => {
+app.listen(PORT, '127.0.0.1', () => {
   console.log(`Server running on port ${PORT}`)
 })
