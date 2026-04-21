@@ -70,6 +70,7 @@ export default {
       painting_ceiling: 'Painting of ceiling',
       electricity: 'Electricity',
       vvs: 'Plumbing & Heating (VVS)',
+      project_manager: 'Project manager',
     },
   },
   projects: {
@@ -109,6 +110,7 @@ export default {
     cancel: 'Cancel',
     delete: 'Delete',
     noUsers: 'No users found.',
+    workTypes: 'Work types',
     leaveBlankPassword: 'Leave blank to keep current password',
     close: 'Close',
   },

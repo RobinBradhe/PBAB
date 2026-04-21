@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { authFetch } from '../api'
+import { USER_WORK_TYPES, type UserWorkType } from '../constants'
 import './Users.css'
 
 interface User {
@@ -11,9 +12,10 @@ interface User {
   last_name: string | null
   email: string | null
   phone: string | null
+  work_types: UserWorkType[]
 }
 
-const emptyForm = { username: '', password: '', role: 'staff', first_name: '', last_name: '', email: '', phone: '' }
+const emptyForm = { username: '', password: '', role: 'staff', first_name: '', last_name: '', email: '', phone: '', work_types: [] as UserWorkType[] }
 
 function generatePassword(): string {
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789!@#%'
@@ -44,7 +46,7 @@ export default function Users({ role }: { role: string }) {
 
   function openEdit(user: User) {
     setSelected(user)
-    setForm({ username: user.username, password: '', role: user.role, first_name: user.first_name ?? '', last_name: user.last_name ?? '', email: user.email ?? '', phone: user.phone ?? '' })
+    setForm({ username: user.username, password: '', role: user.role, first_name: user.first_name ?? '', last_name: user.last_name ?? '', email: user.email ?? '', phone: user.phone ?? '', work_types: user.work_types ?? [] })
     setShowPassword(false)
     setModal('edit')
   }
@@ -60,6 +62,15 @@ export default function Users({ role }: { role: string }) {
     const pwd = generatePassword()
     setForm(f => ({ ...f, password: pwd }))
     setShowPassword(true)
+  }
+
+  function toggleWorkType(wt: UserWorkType) {
+    setForm(prev => ({
+      ...prev,
+      work_types: prev.work_types.includes(wt)
+        ? prev.work_types.filter(w => w !== wt)
+        : [...prev.work_types, wt],
+    }))
   }
 
   async function handleSave() {
@@ -102,6 +113,7 @@ export default function Users({ role }: { role: string }) {
                 <th>{t('users.email')}</th>
                 <th>{t('users.phone')}</th>
                 <th>{t('users.role')}</th>
+                <th>{t('users.workTypes')}</th>
                 {isAdmin && <th></th>}
               </tr>
             </thead>
@@ -113,6 +125,13 @@ export default function Users({ role }: { role: string }) {
                   <td className="td-muted">{u.email || '—'}</td>
                   <td className="td-muted">{u.phone || '—'}</td>
                   <td><span className={`role-badge role-${u.role}`}>{t(`users.role${u.role.charAt(0).toUpperCase() + u.role.slice(1)}`)}</span></td>
+                  <td>
+                    <div className="user-work-types">
+                      {(u.work_types ?? []).map(wt => (
+                        <span key={wt} className="work-type-tag">{t(`rooms.workTypes.${wt}`)}</span>
+                      ))}
+                    </div>
+                  </td>
                   {isAdmin && (
                     <td className="td-actions">
                       <button className="row-btn" onClick={() => openEdit(u)}>✎</button>
@@ -160,6 +179,21 @@ export default function Users({ role }: { role: string }) {
                   <option value="staff">{t('users.roleStaff')}</option>
                   <option value="admin">{t('users.roleAdmin')}</option>
                 </select>
+              </div>
+              <div className="form-field form-field-full">
+                <label className="form-label">{t('users.workTypes')}</label>
+                <div className="checkbox-group">
+                  {USER_WORK_TYPES.map(wt => (
+                    <label key={wt} className="checkbox-label">
+                      <input
+                        type="checkbox"
+                        checked={form.work_types.includes(wt)}
+                        onChange={() => toggleWorkType(wt)}
+                      />
+                      {t(`rooms.workTypes.${wt}`)}
+                    </label>
+                  ))}
+                </div>
               </div>
               <div className="form-field form-field-full">
                 <label className="form-label">{t('users.password')}{modal === 'edit' && <span className="label-hint"> — {t('users.leaveBlankPassword')}</span>}</label>

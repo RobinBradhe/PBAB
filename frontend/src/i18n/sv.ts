@@ -70,6 +70,7 @@ export default {
       painting_ceiling: 'Målning tak',
       electricity: 'El',
       vvs: 'VVS',
+      project_manager: 'Projektledare',
     },
   },
   projects: {
@@ -109,6 +110,7 @@ export default {
     cancel: 'Avbryt',
     delete: 'Ta bort',
     noUsers: 'Inga användare hittades.',
+    workTypes: 'Arbetstyper',
     leaveBlankPassword: 'Lämna tomt för att behålla nuvarande lösenord',
     close: 'Stäng',
   },

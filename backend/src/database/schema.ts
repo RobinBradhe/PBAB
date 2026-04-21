@@ -51,7 +51,7 @@ export function initSchema() {
 }
 
 function migrateUsers() {
-  const cols = ['first_name', 'last_name', 'email', 'phone']
+  const cols = ['first_name', 'last_name', 'email', 'phone', 'work_types']
   for (const col of cols) {
     try { db.exec(`ALTER TABLE users ADD COLUMN ${col} TEXT`) } catch {}
   }

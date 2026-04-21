@@ -17,11 +17,10 @@ import {
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { authFetch } from '../api'
+import { WORK_TYPES, type WorkType } from '../constants'
 import './ProjectDetail.css'
 
 const ROOM_TYPES = ['rum', 'toalett', 'kok', 'badrum', 'hall', 'vardagsrum', 'sovrum'] as const
-const WORK_TYPES = ['painting_walls', 'painting_ceiling', 'electricity', 'vvs'] as const
-type WorkType = typeof WORK_TYPES[number]
 
 interface Room {
   id: number

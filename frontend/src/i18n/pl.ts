@@ -70,6 +70,7 @@ export default {
       painting_ceiling: 'Malowanie sufitu',
       electricity: 'Elektryka',
       vvs: 'Hydraulika i ogrzewanie (VVS)',
+      project_manager: 'Kierownik projektu',
     },
   },
   projects: {
@@ -109,6 +110,7 @@ export default {
     cancel: 'Anuluj',
     delete: 'Usuń',
     noUsers: 'Nie znaleziono żadnych użytkowników.',
+    workTypes: 'Rodzaje prac',
     leaveBlankPassword: 'Pozostaw puste, aby zachować aktualne hasło',
     close: 'Zamknij',
   },

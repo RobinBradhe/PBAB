@@ -70,6 +70,7 @@ export default {
       painting_ceiling: 'Griestu krāsošana',
       electricity: 'Elektrika',
       vvs: 'Santehnika un apkure (VVS)',
+      project_manager: 'Projektu vadītājs',
     },
   },
   projects: {
@@ -109,6 +110,7 @@ export default {
     cancel: 'Atcelt',
     delete: 'Dzēst',
     noUsers: 'Nav atrasts neviens lietotājs.',
+    workTypes: 'Darbu veidi',
     leaveBlankPassword: 'Atstājiet tukšu, lai saglabātu pašreizējo paroli',
     close: 'Aizvērt',
   },

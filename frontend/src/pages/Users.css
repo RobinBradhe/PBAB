@@ -90,6 +90,42 @@
 .role-admin { background: var(--accent-subtle); color: var(--accent-text); }
 .role-staff { background: var(--bg-hover); color: var(--text-secondary); }
 
+.user-work-types {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.work-type-tag {
+  background: var(--bg-hover);
+  border-radius: 4px;
+  color: var(--text-secondary);
+  font-size: 11px;
+  padding: 2px 7px;
+}
+
+.checkbox-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-primary);
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.checkbox-label input[type="checkbox"] {
+  accent-color: var(--accent);
+  cursor: pointer;
+  height: 15px;
+  width: 15px;
+}
+
 /* Modal */
 .modal-overlay {
   position: fixed;

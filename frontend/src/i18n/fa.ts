@@ -70,6 +70,7 @@ export default {
       painting_ceiling: 'رنگ‌آمیزی سقف',
       electricity: 'برق',
       vvs: 'لوله‌کشی و گرمایش (VVS)',
+      project_manager: 'مدیر پروژه',
     },
   },
   projects: {
@@ -109,6 +110,7 @@ export default {
     cancel: 'لغو',
     delete: 'حذف',
     noUsers: 'هیچ کاربری یافت نشد.',
+    workTypes: 'نوع کار',
     leaveBlankPassword: 'برای نگه داشتن رمز عبور فعلی خالی بگذارید',
     close: 'بستن',
   },
