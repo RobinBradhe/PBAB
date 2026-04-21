@@ -32,8 +32,11 @@ export default function Dashboard({ username, role, onLogout, currentTheme, onTh
         </nav>
         <div className="sidebar-bottom">
           <div className="lang-bar">
-            <button className={`lang-btn${i18n.language === 'sv' ? ' active' : ''}`} onClick={() => i18n.changeLanguage('sv')}>SV</button>
-            <button className={`lang-btn${i18n.language === 'en' ? ' active' : ''}`} onClick={() => i18n.changeLanguage('en')}>EN</button>
+            {(['sv','en','fa','lv','pl'] as const).map(lang => (
+              <button key={lang} className={`lang-btn${i18n.language === lang ? ' active' : ''}`} onClick={() => i18n.changeLanguage(lang)}>
+                {lang.toUpperCase()}
+              </button>
+            ))}
           </div>
           <div className="user-info">
             <span className="user-dot" />
