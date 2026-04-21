@@ -6,6 +6,8 @@ import fa from './fa'
 import lv from './lv'
 import pl from './pl'
 
+const savedLang = localStorage.getItem('lang') ?? 'sv'
+
 i18n.use(initReactI18next).init({
   resources: {
     sv: { translation: sv },
@@ -14,9 +16,11 @@ i18n.use(initReactI18next).init({
     lv: { translation: lv },
     pl: { translation: pl },
   },
-  lng: 'sv',
+  lng: savedLang,
   fallbackLng: 'sv',
   interpolation: { escapeValue: false },
 })
+
+i18n.on('languageChanged', lang => localStorage.setItem('lang', lang))
 
 export default i18n
