@@ -27,7 +27,7 @@ export default function Dashboard({ username, role, onLogout, currentTheme, onTh
           <NavLink to="/dashboard" end className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}>{t('nav.overview')}</NavLink>
           <NavLink to="/dashboard/bokningar" className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}>{t('nav.bookings')}</NavLink>
           <NavLink to="/dashboard/priser" className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}>{t('nav.prices')}</NavLink>
-          {role === 'admin' && <NavLink to="/dashboard/anvandare" className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}>{t('nav.users')}</NavLink>}
+          <NavLink to="/dashboard/anvandare" className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}>{t('nav.users')}</NavLink>
           {role === 'admin' && <NavLink to="/dashboard/granssnitt" className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}>{t('nav.interface')}</NavLink>}
         </nav>
         <div className="sidebar-bottom">
@@ -51,7 +51,7 @@ export default function Dashboard({ username, role, onLogout, currentTheme, onTh
 
       <Routes>
         <Route path="/" element={<Overview t={t} />} />
-        <Route path="/anvandare" element={<Anvandare />} />
+        <Route path="/anvandare" element={<Anvandare role={role} />} />
         <Route path="/granssnitt" element={<Granssnitt currentTheme={currentTheme} onThemeChange={onThemeChange} />} />
       </Routes>
     </div>

@@ -20,8 +20,9 @@ function generatePassword(): string {
   return Array.from({ length: 12 }, () => chars[Math.floor(Math.random() * chars.length)]).join('')
 }
 
-export default function Anvandare() {
+export default function Anvandare({ role }: { role: string }) {
   const { t } = useTranslation()
+  const isAdmin = role === 'admin'
   const [users, setUsers] = useState<User[]>([])
   const [modal, setModal] = useState<'add' | 'edit' | 'delete' | null>(null)
   const [selected, setSelected] = useState<User | null>(null)
@@ -86,7 +87,7 @@ export default function Anvandare() {
     <div className="page-content">
       <header className="dashboard-header">
         <h1 className="page-title">{t('users.pageTitle')}</h1>
-        <button className="add-btn" onClick={openAdd}>{t('users.addUser')}</button>
+        {isAdmin && <button className="add-btn" onClick={openAdd}>{t('users.addUser')}</button>}
       </header>
 
       <div className="users-body">
@@ -101,7 +102,7 @@ export default function Anvandare() {
                 <th>{t('users.email')}</th>
                 <th>{t('users.phone')}</th>
                 <th>{t('users.role')}</th>
-                <th></th>
+                {isAdmin && <th></th>}
               </tr>
             </thead>
             <tbody>
@@ -112,10 +113,12 @@ export default function Anvandare() {
                   <td className="td-muted">{u.email || '—'}</td>
                   <td className="td-muted">{u.phone || '—'}</td>
                   <td><span className={`role-badge role-${u.role}`}>{t(`users.role${u.role.charAt(0).toUpperCase() + u.role.slice(1)}`)}</span></td>
-                  <td className="td-actions">
-                    <button className="row-btn" onClick={() => openEdit(u)}>✎</button>
-                    <button className="row-btn row-btn-danger" onClick={() => openDelete(u)}>✕</button>
-                  </td>
+                  {isAdmin && (
+                    <td className="td-actions">
+                      <button className="row-btn" onClick={() => openEdit(u)}>✎</button>
+                      <button className="row-btn row-btn-danger" onClick={() => openDelete(u)}>✕</button>
+                    </td>
+                  )}
                 </tr>
               ))}
             </tbody>

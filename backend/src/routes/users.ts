@@ -1,13 +1,13 @@
 import { Router, Response } from 'express'
 import bcrypt from 'bcrypt'
 import db from '../database/db'
-import { requireAdmin, AuthRequest } from '../middleware/auth'
+import { requireAuth, requireAdmin, AuthRequest } from '../middleware/auth'
 
 const router = Router()
 
 type UserRow = { id: number; username: string; role: string; first_name: string | null; last_name: string | null; email: string | null; phone: string | null; created_at: string }
 
-router.get('/', requireAdmin, (_req: AuthRequest, res: Response) => {
+router.get('/', requireAuth, (_req: AuthRequest, res: Response) => {
   const users = db.prepare('SELECT id, username, role, first_name, last_name, email, phone, created_at FROM users').all() as UserRow[]
   res.json(users)
 })
