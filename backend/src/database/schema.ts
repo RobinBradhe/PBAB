@@ -15,6 +15,34 @@ export function initSchema() {
       key   TEXT PRIMARY KEY,
       value TEXT NOT NULL
     );
+
+    CREATE TABLE IF NOT EXISTS projects (
+      id         INTEGER PRIMARY KEY AUTOINCREMENT,
+      name       TEXT NOT NULL,
+      address    TEXT,
+      zip_code   TEXT,
+      city       TEXT,
+      sqm_total  REAL,
+      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+
+    CREATE TABLE IF NOT EXISTS text_blocks (
+      id         INTEGER PRIMARY KEY AUTOINCREMENT,
+      project_id INTEGER NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+      content    TEXT NOT NULL DEFAULT '',
+      sort_order INTEGER NOT NULL DEFAULT 0,
+      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+
+    CREATE TABLE IF NOT EXISTS rooms (
+      id         INTEGER PRIMARY KEY AUTOINCREMENT,
+      project_id INTEGER NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+      room_type  TEXT NOT NULL,
+      work_types TEXT NOT NULL DEFAULT '[]',
+      notes      TEXT,
+      sort_order INTEGER NOT NULL DEFAULT 0,
+      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
   `)
 
   migrateUsers()

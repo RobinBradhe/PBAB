@@ -2,6 +2,8 @@ import { Routes, Route, NavLink } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import Interface from './pages/Interface'
 import Users from './pages/Users'
+import Projects from './pages/Projects'
+import ProjectDetail from './pages/ProjectDetail'
 import { LANGUAGES, type Theme } from './constants'
 import './Dashboard.css'
 
@@ -25,8 +27,9 @@ export default function Dashboard({ username, role, onLogout, currentTheme, onTh
         </div>
         <nav className="sidebar-nav">
           <NavLink to="/dashboard" end className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}>{t('nav.overview')}</NavLink>
-          <NavLink to="/dashboard/bokningar" className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}>{t('nav.bookings')}</NavLink>
-          <NavLink to="/dashboard/priser" className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}>{t('nav.prices')}</NavLink>
+          <NavLink to="/dashboard/projects" className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}>{t('nav.projects')}</NavLink>
+          <NavLink to="/dashboard/bookings" className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}>{t('nav.bookings')}</NavLink>
+          <NavLink to="/dashboard/prices" className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}>{t('nav.prices')}</NavLink>
           <NavLink to="/dashboard/users" className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}>{t('nav.users')}</NavLink>
           {role === 'admin' && <NavLink to="/dashboard/interface" className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}>{t('nav.interface')}</NavLink>}
         </nav>
@@ -51,6 +54,8 @@ export default function Dashboard({ username, role, onLogout, currentTheme, onTh
 
       <Routes>
         <Route path="/" element={<Overview t={t} />} />
+        <Route path="/projects" element={<Projects role={role} />} />
+        <Route path="/projects/:id" element={<ProjectDetail role={role} />} />
         <Route path="/users" element={<Users role={role} />} />
         <Route path="/interface" element={<Interface currentTheme={currentTheme} onThemeChange={onThemeChange} />} />
       </Routes>
