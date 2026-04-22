@@ -3,7 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import Dashboard from './Dashboard'
 import { API } from './api'
-import { LANGUAGES, type Theme } from './constants'
+import { LANGUAGES, type Theme } from './types/constants'
 import './App.css'
 
 interface User {

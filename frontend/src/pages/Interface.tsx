@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { authFetch } from '../api'
-import { THEMES, type Theme } from '../constants'
+import { THEMES, type Theme } from '../types/constants'
 import './Interface.css'
 
 const THEME_COLORS: Record<Theme, string> = {

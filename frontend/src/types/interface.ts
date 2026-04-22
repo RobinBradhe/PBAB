@@ -1,4 +1,4 @@
-import type { WorkType } from '../constants'
+import type { WorkType } from './constants'
 
 export interface Price {
     id: number
@@ -35,3 +35,12 @@ export interface Project {
     sqm_total: number | null
     image: string | null
 }
+
+export type PriceData = { work_type: string; hours: number; rate: number; include_vat: boolean }
+
+export type ListItem = { kind: 'room'; data: Room } | { kind: 'text'; data: TextBlock }
+
+export type RoomFormData = { room_type: string; work_types: WorkType[]; notes: string }
+
+export const EmptyRoomForm = { room_type: 'rum', work_types: [] as WorkType[], notes: '' }
+

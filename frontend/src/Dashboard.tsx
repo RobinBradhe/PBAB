@@ -4,7 +4,7 @@ import Interface from './pages/Interface'
 import Users from './pages/Users'
 import Projects from './pages/Projects'
 import ProjectDetail from './pages/ProjectDetail'
-import { LANGUAGES, type Theme } from './constants'
+import { LANGUAGES, type Theme } from './types/constants'
 import './Dashboard.css'
 
 interface Props {

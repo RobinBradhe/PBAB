@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { authFetch } from '../api'
-import { USER_WORK_TYPES, type UserWorkType } from '../constants'
+import { USER_WORK_TYPES, type UserWorkType } from '../types/constants'
 import './Users.css'
 
 interface User {
