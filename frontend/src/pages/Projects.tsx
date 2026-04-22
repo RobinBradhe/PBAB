@@ -148,31 +148,31 @@ export default function Projects({ role }: { role: string }) {
             </div>
             <div className="modal-grid">
               <div className="form-field form-field-full">
-                <label className="form-label">{t('projects.name')}</label>
-                <input className="form-input" value={form.name} onChange={f('name')} />
+                <label className="form-label" htmlFor="proj-name">{t('projects.name')}</label>
+                <input id="proj-name" name="name" className="form-input" value={form.name} onChange={f('name')} />
               </div>
               <div className="form-field form-field-full">
-                <label className="form-label">{t('projects.address')}</label>
-                <input className="form-input" value={form.address} onChange={f('address')} />
+                <label className="form-label" htmlFor="proj-address">{t('projects.address')}</label>
+                <input id="proj-address" name="address" className="form-input" value={form.address} onChange={f('address')} />
               </div>
               <div className="form-field">
-                <label className="form-label">{t('projects.zipCode')}</label>
-                <input className="form-input" value={form.zip_code} onChange={f('zip_code')} />
+                <label className="form-label" htmlFor="proj-zip">{t('projects.zipCode')}</label>
+                <input id="proj-zip" name="zip_code" className="form-input" value={form.zip_code} onChange={f('zip_code')} />
               </div>
               <div className="form-field">
-                <label className="form-label">{t('projects.city')}</label>
-                <input className="form-input" value={form.city} onChange={f('city')} />
+                <label className="form-label" htmlFor="proj-city">{t('projects.city')}</label>
+                <input id="proj-city" name="city" className="form-input" value={form.city} onChange={f('city')} />
               </div>
               <div className="form-field">
-                <label className="form-label">{t('projects.sqmTotal')}</label>
-                <input className="form-input" type="number" min="0" value={form.sqm_total} onChange={f('sqm_total')} />
+                <label className="form-label" htmlFor="proj-sqm">{t('projects.sqmTotal')}</label>
+                <input id="proj-sqm" name="sqm_total" className="form-input" type="number" min="0" value={form.sqm_total} onChange={f('sqm_total')} />
               </div>
               <div className="form-field form-field-full">
-                <label className="form-label">{t('projects.image')}</label>
+                <label className="form-label" htmlFor="proj-image">{t('projects.image')}</label>
                 {modal === 'edit' && selected?.image && !imageFile && (
                   <img src={`${UPLOADS_URL}/${selected.image}`} alt="" className="modal-image-preview" />
                 )}
-                <input className="form-input" type="file" accept="image/*"
+                <input className="form-input" id="proj-image" name="image" type="file" accept="image/*"
                   onChange={e => setImageFile(e.target.files?.[0] ?? null)} />
               </div>
             </div>

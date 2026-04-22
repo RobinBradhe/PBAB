@@ -43,16 +43,38 @@ export function initSchema() {
       sort_order INTEGER NOT NULL DEFAULT 0,
       created_at TEXT NOT NULL DEFAULT (datetime('now'))
     );
+
+    CREATE TABLE IF NOT EXISTS prices (
+      id          INTEGER PRIMARY KEY AUTOINCREMENT,
+      room_id     INTEGER NOT NULL REFERENCES rooms(id) ON DELETE CASCADE,
+      work_type   TEXT NOT NULL,
+      hours       REAL NOT NULL,
+      rate        REAL NOT NULL,
+      include_vat INTEGER NOT NULL DEFAULT 0
+    );
   `)
 
   migrateUsers()
   migrateProjects()
+  migratePrices()
   seedDefaultUsers()
   seedDefaultSettings()
 }
 
 function migrateProjects() {
   try { db.exec(`ALTER TABLE projects ADD COLUMN image TEXT`) } catch {}
+}
+
+function migratePrices() {
+  try { db.exec('DROP TABLE IF EXISTS price') } catch {}
+  db.exec(`CREATE TABLE IF NOT EXISTS prices (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    room_id     INTEGER NOT NULL REFERENCES rooms(id) ON DELETE CASCADE,
+    work_type   TEXT NOT NULL,
+    hours       REAL NOT NULL,
+    rate        REAL NOT NULL,
+    include_vat INTEGER NOT NULL DEFAULT 0
+  )`)
 }
 
 function migrateUsers() {

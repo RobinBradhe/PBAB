@@ -54,6 +54,9 @@ export default {
     delete: 'Ta bort',
     close: 'Stäng',
     noRooms: 'Inga rum har lagts till ännu.',
+    prices: {
+      addPrice: 'Lägg till pris',
+    },
     addTextBlock: 'Lägg till text',
     textBlockPlaceholder: 'Skriv något...',
     types: {

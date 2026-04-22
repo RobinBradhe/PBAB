@@ -154,28 +154,28 @@ export default function Users({ role }: { role: string }) {
             </div>
             <div className="modal-grid">
               <div className="form-field">
-                <label className="form-label">{t('users.firstName')}</label>
-                <input className="form-input" value={form.first_name} onChange={f('first_name')} />
+                <label className="form-label" htmlFor="usr-first">{t('users.firstName')}</label>
+                <input id="usr-first" name="first_name" className="form-input" value={form.first_name} onChange={f('first_name')} />
               </div>
               <div className="form-field">
-                <label className="form-label">{t('users.lastName')}</label>
-                <input className="form-input" value={form.last_name} onChange={f('last_name')} />
+                <label className="form-label" htmlFor="usr-last">{t('users.lastName')}</label>
+                <input id="usr-last" name="last_name" className="form-input" value={form.last_name} onChange={f('last_name')} />
               </div>
               <div className="form-field">
-                <label className="form-label">{t('users.email')}</label>
-                <input className="form-input" type="email" value={form.email} onChange={f('email')} />
+                <label className="form-label" htmlFor="usr-email">{t('users.email')}</label>
+                <input id="usr-email" name="email" className="form-input" type="email" value={form.email} onChange={f('email')} />
               </div>
               <div className="form-field">
-                <label className="form-label">{t('users.phone')}</label>
-                <input className="form-input" type="tel" value={form.phone} onChange={f('phone')} />
+                <label className="form-label" htmlFor="usr-phone">{t('users.phone')}</label>
+                <input id="usr-phone" name="phone" className="form-input" type="tel" value={form.phone} onChange={f('phone')} />
               </div>
               <div className="form-field">
-                <label className="form-label">{t('users.username')}</label>
-                <input className="form-input" value={form.username} onChange={f('username')} />
+                <label className="form-label" htmlFor="usr-username">{t('users.username')}</label>
+                <input id="usr-username" name="username" className="form-input" value={form.username} onChange={f('username')} />
               </div>
               <div className="form-field">
-                <label className="form-label">{t('users.role')}</label>
-                <select className="form-input" value={form.role} onChange={f('role')}>
+                <label className="form-label" htmlFor="usr-role">{t('users.role')}</label>
+                <select id="usr-role" name="role" className="form-input" value={form.role} onChange={f('role')}>
                   <option value="staff">{t('users.roleStaff')}</option>
                   <option value="admin">{t('users.roleAdmin')}</option>
                 </select>
@@ -196,9 +196,9 @@ export default function Users({ role }: { role: string }) {
                 </div>
               </div>
               <div className="form-field form-field-full">
-                <label className="form-label">{t('users.password')}{modal === 'edit' && <span className="label-hint"> — {t('users.leaveBlankPassword')}</span>}</label>
+                <label className="form-label" htmlFor="usr-password">{t('users.password')}{modal === 'edit' && <span className="label-hint"> — {t('users.leaveBlankPassword')}</span>}</label>
                 <div className="password-row">
-                  <input className="form-input" type={showPassword ? 'text' : 'password'} value={form.password} onChange={f('password')} />
+                  <input id="usr-password" name="password" className="form-input" type={showPassword ? 'text' : 'password'} value={form.password} onChange={f('password')} />
                   <button type="button" className="gen-btn" onClick={handleGenerate}>{t('users.generatePassword')}</button>
                 </div>
               </div>

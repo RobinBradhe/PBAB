@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import {
@@ -19,8 +19,58 @@ import { CSS } from '@dnd-kit/utilities'
 import { authFetch, UPLOADS_URL } from '../api'
 import { WORK_TYPES, type WorkType } from '../constants'
 import './ProjectDetail.css'
+import React from 'react'
 
 const ROOM_TYPES = ['rum', 'toalett', 'kok', 'badrum', 'hall', 'vardagsrum', 'sovrum'] as const
+
+function renderText(text: string) {
+  const lines = text.split('\n')
+  const out: React.ReactNode[] = []
+  let i = 0
+  let key = 0
+
+  while (i < lines.length) {
+    if (lines[i].trim() === '') { i++; continue }
+
+    if (/^- /.test(lines[i])) {
+      const items: string[] = []
+      while (i < lines.length && /^- /.test(lines[i])) { items.push(lines[i].slice(2)); i++ }
+      out.push(<ul key={key++}>{items.map((t, j) => <li key={j}>{t}</li>)}</ul>)
+      continue
+    }
+
+    if (/^\d+\.\s/.test(lines[i])) {
+      const items: string[] = []
+      while (i < lines.length && /^\d+\.\s/.test(lines[i])) { items.push(lines[i].replace(/^\d+\.\s/, '')); i++ }
+      out.push(<ol key={key++}>{items.map((t, j) => <li key={j}>{t}</li>)}</ol>)
+      continue
+    }
+
+    const para: string[] = []
+    while (i < lines.length && lines[i].trim() !== '' && !/^- /.test(lines[i]) && !/^\d+\.\s/.test(lines[i])) {
+      para.push(lines[i]); i++
+    }
+    out.push(
+      <p key={key++}>
+        {para.map((l, j) => <React.Fragment key={j}>{j > 0 && <br />}{l}</React.Fragment>)}
+      </p>
+    )
+  }
+
+  return out
+}
+
+
+interface Price {
+  id: number
+  room_id: number
+  work_type: string
+  hours: number
+  rate: number
+  include_vat: boolean
+}
+
+type PriceData = { work_type: string; hours: number; rate: number; include_vat: boolean }
 
 interface Room {
   id: number
@@ -29,6 +79,7 @@ interface Room {
   work_types: WorkType[]
   notes: string | null
   sort_order: number
+  prices: Price[]
 }
 
 interface TextBlock {
@@ -56,17 +107,59 @@ function itemKey(item: ListItem) {
   return `${item.kind}-${item.data.id}`
 }
 
+const emptyPriceForm = { work_type: WORK_TYPES[0] as string, hours: '', rate: '', include_vat: false }
+
+function fmt(n: number) {
+  return n.toLocaleString('sv-SE', { maximumFractionDigits: 0 }) + ' kr'
+}
+
 function SortableRoomCard({
-  room, isAdmin, t, onEdit, onDelete,
+  room, isAdmin, t, onEdit, onDelete, onAddPrice, onUpdatePrice, onDeletePrice,
 }: {
   room: Room
   isAdmin: boolean
   t: (k: string) => string
   onEdit: (r: Room) => void
   onDelete: (r: Room) => void
+  onAddPrice: (roomId: number, data: PriceData) => Promise<void>
+  onUpdatePrice: (roomId: number, priceId: number, data: PriceData) => Promise<void>
+  onDeletePrice: (roomId: number, priceId: number) => Promise<void>
 }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
     useSortable({ id: `room-${room.id}` })
+
+  const [editPriceId, setEditPriceId] = useState<number | null>(null)
+  const [showAdd, setShowAdd] = useState(false)
+  const [priceForm, setPriceForm] = useState(emptyPriceForm)
+
+  function startEdit(p: Price) {
+    setEditPriceId(p.id)
+    setShowAdd(false)
+    setPriceForm({ work_type: p.work_type, hours: String(p.hours), rate: String(p.rate), include_vat: p.include_vat })
+  }
+
+  function startAdd() {
+    setShowAdd(true)
+    setEditPriceId(null)
+    setPriceForm({ ...emptyPriceForm, work_type: room.work_types[0] ?? WORK_TYPES[0] })
+  }
+
+  async function saveAdd() {
+    if (!priceForm.hours || !priceForm.rate) return
+    await onAddPrice(room.id, { work_type: priceForm.work_type, hours: Number(priceForm.hours), rate: Number(priceForm.rate), include_vat: priceForm.include_vat })
+    setShowAdd(false)
+  }
+
+  async function saveEdit() {
+    if (editPriceId == null || !priceForm.hours || !priceForm.rate) return
+    await onUpdatePrice(room.id, editPriceId, { work_type: priceForm.work_type, hours: Number(priceForm.hours), rate: Number(priceForm.rate), include_vat: priceForm.include_vat })
+    setEditPriceId(null)
+  }
+
+  const pris = room.prices.reduce((sum, p) => sum + p.hours * p.rate, 0)
+  const moms = room.prices.filter(p => !p.include_vat).reduce((sum, p) => sum + p.hours * p.rate * 0.25, 0)
+  const totaltPris = pris + moms
+  const showPrices = isAdmin || room.prices.length > 0
 
   return (
     <div
@@ -89,7 +182,98 @@ function SortableRoomCard({
           </div>
         )}
       </div>
-      {room.notes && <p className="room-notes">{room.notes}</p>}
+      {room.notes && <div className="room-notes">{renderText(room.notes)}</div>}
+
+      {showPrices && (
+        <div className="room-prices">
+          {room.prices.length > 0 && (
+            <table className="price-table">
+              <tbody>
+                {room.prices.map(p =>
+                  editPriceId === p.id ? (
+                    <tr key={p.id}>
+                      <td colSpan={5}>
+                        <div className="price-form-row">
+                          <select name="work_type" className="price-form-input price-form-select" value={priceForm.work_type}
+                            onChange={e => setPriceForm(prev => ({ ...prev, work_type: e.target.value }))}>
+                            {WORK_TYPES.map(wt => <option key={wt} value={wt}>{t(`rooms.workTypes.${wt}`)}</option>)}
+                          </select>
+                          <input aria-label="Timmar" name="hours" className="price-form-input price-form-number" type="number" min="0" step="0.5" placeholder="Tim"
+                            value={priceForm.hours} onChange={e => setPriceForm(prev => ({ ...prev, hours: e.target.value }))} />
+                          <span className="price-form-unit">h ×</span>
+                          <input aria-label="Pris per timme" name="rate" className="price-form-input price-form-number" type="number" min="0" placeholder="kr/h"
+                            value={priceForm.rate} onChange={e => setPriceForm(prev => ({ ...prev, rate: e.target.value }))} />
+                          <span className="price-form-unit">kr/h</span>
+                          <label className="price-form-vat">
+                            <input type="checkbox" checked={priceForm.include_vat}
+                              onChange={e => setPriceForm(prev => ({ ...prev, include_vat: e.target.checked }))} />
+                            Moms
+                          </label>
+                          <div className="price-form-actions">
+                            <button className="save-btn price-form-btn" onClick={saveEdit}>✓</button>
+                            <button className="cancel-btn price-form-btn" onClick={() => setEditPriceId(null)}>✕</button>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                  ) : (
+                    <tr key={p.id}>
+                      <td className="price-work-type">{t(`rooms.workTypes.${p.work_type}`)}</td>
+                      <td className="price-formula">{p.hours}h × {p.rate.toLocaleString('sv-SE')} kr/h</td>
+                      <td className="price-total">{fmt(p.hours * p.rate)}</td>
+                      <td>{p.include_vat && <span className="price-vat-badge">moms</span>}</td>
+                      {isAdmin && (
+                        <td className="price-actions">
+                          <button className="row-btn" onClick={() => startEdit(p)}>✎</button>
+                          <button className="row-btn row-btn-danger" onClick={() => onDeletePrice(room.id, p.id)}>✕</button>
+                        </td>
+                      )}
+                    </tr>
+                  )
+                )}
+              </tbody>
+            </table>
+          )}
+
+          {room.prices.length > 0 && (
+            <div className="room-total">
+              <span className="room-total-label">Pris:</span>
+              <span className="room-total-value">{fmt(pris)}</span>
+              <span className="room-total-label">Moms:</span>
+              <span className="room-total-value">{fmt(moms)}</span>
+              <span className="room-total-label">Totalt pris:</span>
+              <span className="room-total-value">{fmt(totaltPris)}</span>
+            </div>
+          )}
+
+          {isAdmin && !showAdd && (
+            <button className="price-add-btn" onClick={startAdd}>+ {t('rooms.prices.addPrice')}</button>
+          )}
+          {isAdmin && showAdd && (
+            <div className="price-form-row">
+              <select name="work_type" className="price-form-input price-form-select" value={priceForm.work_type}
+                onChange={e => setPriceForm(prev => ({ ...prev, work_type: e.target.value }))}>
+                {WORK_TYPES.map(wt => <option key={wt} value={wt}>{t(`rooms.workTypes.${wt}`)}</option>)}
+              </select>
+              <input aria-label="Timmar" name="hours" className="price-form-input price-form-number" type="number" min="0" step="0.5" placeholder="Tim"
+                value={priceForm.hours} onChange={e => setPriceForm(prev => ({ ...prev, hours: e.target.value }))} />
+              <span className="price-form-unit">h ×</span>
+              <input aria-label="Pris per timme" name="rate" className="price-form-input price-form-number" type="number" min="0" placeholder="kr/h"
+                value={priceForm.rate} onChange={e => setPriceForm(prev => ({ ...prev, rate: e.target.value }))} />
+              <span className="price-form-unit">kr/h</span>
+              <label className="price-form-vat">
+                <input type="checkbox" checked={priceForm.include_vat}
+                  onChange={e => setPriceForm(prev => ({ ...prev, include_vat: e.target.checked }))} />
+                Moms
+              </label>
+              <div className="price-form-actions">
+                <button className="save-btn price-form-btn" onClick={saveAdd}>✓</button>
+                <button className="cancel-btn price-form-btn" onClick={() => setShowAdd(false)}>✕</button>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   )
 }
@@ -105,14 +289,22 @@ function SortableTextBlock({
 }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
     useSortable({ id: `text-${block.id}` })
+  const [editing, setEditing] = useState(false)
   const [value, setValue] = useState(block.content)
-  const savedRef = useRef(block.content)
 
-  function handleBlur() {
-    if (value !== savedRef.current) {
-      savedRef.current = value
-      onSave(block.id, value)
-    }
+  function handleSave() {
+    onSave(block.id, value)
+    setEditing(false)
+  }
+
+  function handleCancel() {
+    setValue(block.content)
+    setEditing(false)
+  }
+
+  function handleKeyDown(e: React.KeyboardEvent) {
+    if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); handleSave() }
+    if (e.key === 'Escape') { e.preventDefault(); handleCancel() }
   }
 
   return (
@@ -122,20 +314,35 @@ function SortableTextBlock({
       className={`text-block-card${isDragging ? ' dragging' : ''}`}
     >
       {isAdmin && <button className="drag-handle" {...attributes} {...listeners} aria-label="drag">⠿</button>}
-      {isAdmin ? (
-        <textarea
-          className="text-block-area"
-          value={value}
-          onChange={e => setValue(e.target.value)}
-          onBlur={handleBlur}
-          placeholder={t('rooms.textBlockPlaceholder')}
-          rows={3}
-        />
+      {isAdmin && editing ? (
+        <>
+          <textarea
+            name="text_block" className="text-block-area"
+            aria-label={t('rooms.textBlockPlaceholder')}
+            value={value}
+            onChange={e => setValue(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder={t('rooms.textBlockPlaceholder')}
+            rows={3}
+            autoFocus
+          />
+          <div className="text-block-actions">
+            <button className="row-btn text-block-save" onClick={handleSave}>✓</button>
+            <button className="row-btn" onClick={handleCancel}>✕</button>
+          </div>
+        </>
       ) : (
-        <p className="text-block-content">{block.content}</p>
-      )}
-      {isAdmin && (
-        <button className="row-btn row-btn-danger text-block-delete" onClick={() => onDelete(block)}>✕</button>
+        <>
+          <div className="text-block-content" onClick={isAdmin ? () => setEditing(true) : undefined}>
+            {block.content ? renderText(block.content) : isAdmin && <span className="text-block-placeholder">{t('rooms.textBlockPlaceholder')}</span>}
+          </div>
+          {isAdmin && (
+            <div className="text-block-actions">
+              <button className="row-btn" onClick={() => setEditing(true)}>✎</button>
+              <button className="row-btn row-btn-danger" onClick={() => onDelete(block)}>✕</button>
+            </div>
+          )}
+        </>
       )}
     </div>
   )
@@ -231,6 +438,30 @@ export default function ProjectDetail({ role }: { role: string }) {
     await fetchAll()
   }
 
+
+  async function handleAddPrice(roomId: number, data: PriceData) {
+    await authFetch(`/rooms/${roomId}/prices`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    })
+    await fetchAll()
+  }
+
+  async function handleUpdatePrice(roomId: number, priceId: number, data: PriceData) {
+    await authFetch(`/rooms/${roomId}/prices/${priceId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    })
+    await fetchAll()
+  }
+
+  async function handleDeletePrice(roomId: number, priceId: number) {
+    await authFetch(`/rooms/${roomId}/prices/${priceId}`, { method: 'DELETE' })
+    await fetchAll()
+  }
+
   async function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event
     if (!over || active.id === over.id) return
@@ -292,6 +523,9 @@ export default function ProjectDetail({ role }: { role: string }) {
                     t={t}
                     onEdit={openEdit}
                     onDelete={openDeleteRoom}
+                    onAddPrice={handleAddPrice}
+                    onUpdatePrice={handleUpdatePrice}
+                    onDeletePrice={handleDeletePrice}
                   />
                 ) : (
                   <SortableTextBlock
@@ -318,9 +552,9 @@ export default function ProjectDetail({ role }: { role: string }) {
             </div>
             <div className="modal-grid">
               <div className="form-field form-field-full">
-                <label className="form-label">{t('rooms.roomType')}</label>
+                <label className="form-label" htmlFor="room-type">{t('rooms.roomType')}</label>
                 <select
-                  className="form-input"
+                  id="room-type" name="room_type" className="form-input"
                   value={roomForm.room_type}
                   onChange={e => setRoomForm(prev => ({ ...prev, room_type: e.target.value }))}
                 >
@@ -345,9 +579,9 @@ export default function ProjectDetail({ role }: { role: string }) {
                 </div>
               </div>
               <div className="form-field form-field-full">
-                <label className="form-label">{t('rooms.notes')}</label>
+                <label className="form-label" htmlFor="room-notes">{t('rooms.notes')}</label>
                 <textarea
-                  className="form-input form-textarea"
+                  id="room-notes" name="notes" className="form-input form-textarea"
                   value={roomForm.notes}
                   onChange={e => setRoomForm(prev => ({ ...prev, notes: e.target.value }))}
                   rows={4}

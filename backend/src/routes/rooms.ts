@@ -13,11 +13,28 @@ type RoomRow = {
   sort_order: number
 }
 
+type PriceRow = {
+  id: number
+  room_id: number
+  work_type: string
+  hours: number
+  rate: number
+  include_vat: number
+}
+
 router.get('/', requireAuth, (req: AuthRequest, res: Response) => {
   const { project_id } = req.query
   if (!project_id) { res.status(400).json({ error: 'project_id is required' }); return }
   const rooms = db.prepare('SELECT * FROM rooms WHERE project_id = ? ORDER BY sort_order').all(project_id) as RoomRow[]
-  res.json(rooms.map(r => ({ ...r, work_types: JSON.parse(r.work_types) })))
+  const roomIds = rooms.map(r => r.id)
+  const prices: PriceRow[] = roomIds.length > 0
+    ? db.prepare(`SELECT * FROM prices WHERE room_id IN (${roomIds.map(() => '?').join(',')}) ORDER BY id`).all(...roomIds) as PriceRow[]
+    : []
+  res.json(rooms.map(r => ({
+    ...r,
+    work_types: JSON.parse(r.work_types),
+    prices: prices.filter(p => p.room_id === r.id).map(p => ({ ...p, include_vat: Boolean(p.include_vat) })),
+  })))
 })
 
 router.post('/', requireAdmin, (req: AuthRequest, res: Response) => {
@@ -42,6 +59,27 @@ router.put('/:id', requireAdmin, (req: AuthRequest, res: Response) => {
 
 router.delete('/:id', requireAdmin, (req: AuthRequest, res: Response) => {
   db.prepare('DELETE FROM rooms WHERE id = ?').run(req.params.id)
+  res.json({ ok: true })
+})
+
+router.post('/:id/prices', requireAdmin, (req: AuthRequest, res: Response) => {
+  const { work_type, hours, rate, include_vat = false } = req.body
+  if (!work_type || hours == null || rate == null) { res.status(400).json({ error: 'work_type, hours, and rate are required' }); return }
+  const result = db.prepare('INSERT INTO prices (room_id, work_type, hours, rate, include_vat) VALUES (?, ?, ?, ?, ?)')
+    .run(req.params.id, work_type, hours, rate, include_vat ? 1 : 0)
+  res.status(201).json({ id: result.lastInsertRowid, room_id: Number(req.params.id), work_type, hours, rate, include_vat })
+})
+
+router.put('/:id/prices/:priceId', requireAdmin, (req: AuthRequest, res: Response) => {
+  const { work_type, hours, rate, include_vat = false } = req.body
+  if (!work_type || hours == null || rate == null) { res.status(400).json({ error: 'work_type, hours, and rate are required' }); return }
+  db.prepare('UPDATE prices SET work_type = ?, hours = ?, rate = ?, include_vat = ? WHERE id = ? AND room_id = ?')
+    .run(work_type, hours, rate, include_vat ? 1 : 0, req.params.priceId, req.params.id)
+  res.json({ id: Number(req.params.priceId), room_id: Number(req.params.id), work_type, hours, rate, include_vat })
+})
+
+router.delete('/:id/prices/:priceId', requireAdmin, (req: AuthRequest, res: Response) => {
+  db.prepare('DELETE FROM prices WHERE id = ? AND room_id = ?').run(req.params.priceId, req.params.id)
   res.json({ ok: true })
 })
 

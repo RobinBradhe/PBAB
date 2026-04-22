@@ -26,7 +26,7 @@
   display: flex;
   align-items: flex-start;
   gap: 20px;
-  padding: 0 32px 20px;
+  padding: 32px 20px;
   color: var(--text-secondary);
   font-size: 13px;
   border-bottom: 1px solid var(--border);
@@ -225,3 +225,181 @@
   font-family: inherit;
   line-height: 1.5;
 }
+
+/* Price section */
+.room-prices {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+.price-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.price-table td {
+  padding: 4px 8px;
+  vertical-align: middle;
+}
+
+.price-table td:first-child { padding-left: 0; }
+
+.price-work-type {
+  color: var(--text-secondary);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.price-formula {
+  color: var(--text-muted);
+}
+
+.price-total {
+  color: var(--text-primary);
+  font-weight: 600;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.price-vat-badge {
+  background: var(--accent-subtle);
+  color: var(--accent-text);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  padding: 1px 6px;
+  border-radius: 3px;
+  text-transform: uppercase;
+}
+
+.price-actions {
+  display: flex;
+  gap: 4px;
+  justify-content: flex-end;
+}
+
+.room-total {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+  font-size: 13px;
+  justify-content: flex-end;
+}
+
+.room-total-label { color: var(--text-muted); }
+
+.room-total-value {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.price-add-btn {
+  background: none;
+  border: 1px dashed var(--border);
+  border-radius: 5px;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 12px;
+  margin-top: 8px;
+  padding: 5px 12px;
+  transition: all 0.15s;
+  width: 100%;
+}
+
+.price-add-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent-text);
+}
+
+.price-form-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+.price-form-input {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 13px;
+  padding: 4px 8px;
+}
+
+.price-form-input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.price-form-select { min-width: 110px; }
+
+.price-form-number { width: 68px; }
+
+.price-form-unit {
+  color: var(--text-muted);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.price-form-vat {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.price-form-vat input[type="checkbox"] {
+  accent-color: var(--accent);
+  cursor: pointer;
+  height: 14px;
+  width: 14px;
+}
+
+.price-form-actions { display: flex; gap: 4px; }
+
+.price-form-btn {
+  font-size: 12px !important;
+  padding: 4px 10px !important;
+}
+
+.room-total-grand {
+  border-top: 1px solid var(--border);
+  padding-top: 4px;
+  margin-top: 2px;
+}
+
+.room-notes p, .text-block-content p { margin: 0 0 6px 0; }
+.room-notes p:last-child, .text-block-content p:last-child { margin-bottom: 0; }
+.room-notes ul, .room-notes ol,
+.text-block-content ul, .text-block-content ol {
+  margin: 0 0 6px 20px;
+  padding: 0;
+}
+.room-notes ul:last-child, .room-notes ol:last-child,
+.text-block-content ul:last-child, .text-block-content ol:last-child { margin-bottom: 0; }
+.room-notes li, .text-block-content li { margin-bottom: 2px; }
+
+.text-block-actions {
+  display: flex;
+  gap: 4px;
+  justify-content: flex-end;
+  margin-top: 4px;
+  flex-shrink: 0;
+}
+
+.text-block-save { color: var(--accent-text); }
+
+.text-block-placeholder { color: var(--text-muted); font-style: italic; font-size: 13px; }
+\n.text-block-placeholder { color: var(--text-muted); font-style: italic; font-size: 13px; }
