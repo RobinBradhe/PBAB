@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { type Project, type Price, type Room, type TextBlock } from '../types/interface'
 import {
   DndContext,
   closestCenter,
@@ -17,11 +18,11 @@ import {
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { authFetch, UPLOADS_URL } from '../api'
-import { WORK_TYPES, type WorkType } from '../constants'
+import { WORK_TYPES, type WorkType, ROOM_TYPES, type RoomType } from '../constants'
 import './ProjectDetail.css'
 import React from 'react'
-
-const ROOM_TYPES = ['rum', 'toalett', 'kok', 'badrum', 'hall', 'vardagsrum', 'sovrum'] as const
+import ProjectHeader from '../components/ProjectDetail/ProjectHeader'
+import ProjectMeta from '../components/ProjectDetail/ProjectMeta'
 
 function renderText(text: string) {
   const lines = text.split('\n')
@@ -60,46 +61,9 @@ function renderText(text: string) {
   return out
 }
 
-
-interface Price {
-  id: number
-  room_id: number
-  work_type: string
-  hours: number
-  rate: number
-  include_vat: boolean
-}
-
 type PriceData = { work_type: string; hours: number; rate: number; include_vat: boolean }
 
-interface Room {
-  id: number
-  project_id: number
-  room_type: string
-  work_types: WorkType[]
-  notes: string | null
-  sort_order: number
-  prices: Price[]
-}
-
-interface TextBlock {
-  id: number
-  project_id: number
-  content: string
-  sort_order: number
-}
-
 type ListItem = { kind: 'room'; data: Room } | { kind: 'text'; data: TextBlock }
-
-interface Project {
-  id: number
-  name: string
-  address: string | null
-  zip_code: string | null
-  city: string | null
-  sqm_total: number | null
-  image: string | null
-}
 
 const emptyRoomForm = { room_type: 'rum', work_types: [] as WorkType[], notes: '' }
 
@@ -480,34 +444,16 @@ export default function ProjectDetail({ role }: { role: string }) {
 
   return (
     <div className="page-content">
-      <header className="dashboard-header">
-        <div className="detail-breadcrumb">
-          <button className="back-btn" onClick={() => navigate('/dashboard/projects')}>← {t('projects.pageTitle')}</button>
-          <span className="breadcrumb-sep">/</span>
-          <h1 className="page-title">{project?.name ?? '...'}</h1>
-        </div>
-        {isAdmin && (
-          <div className="detail-actions">
-            <button className="add-btn add-btn-secondary" onClick={handleAddTextBlock}>{t('rooms.addTextBlock')}</button>
-            <button className="add-btn" onClick={openAdd}>{t('rooms.addRoom')}</button>
-          </div>
-        )}
-      </header>
 
-      {project && (
-        <div className="project-meta">
-          {project.image && (
-            <img src={`${UPLOADS_URL}/${project.image}`} alt="" className="project-detail-image" />
-          )}
-          <div className="project-meta-fields">
-            {project.address && <span>{project.address}</span>}
-            {project.zip_code && <span>{project.zip_code}</span>}
-            {project.city && <span>{project.city}</span>}
-            {project.sqm_total != null && <span>{project.sqm_total} m²</span>}
-          </div>
-        </div>
-      )}
+      <ProjectHeader
+        project={project}
+        isAdmin={isAdmin}
+        onAddRoom={openAdd}
+        onAddTextBlock={handleAddTextBlock}
+      />
 
+      <ProjectMeta project={project} />
+   
       <div className="rooms-body">
         {items.length === 0 ? (
           <div className="empty-state">{t('rooms.noRooms')}</div>

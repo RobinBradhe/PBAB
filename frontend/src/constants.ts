@@ -12,3 +12,6 @@ export type WorkType = typeof WORK_TYPES[number]
 
 export const USER_WORK_TYPES = [...WORK_TYPES, 'project_manager'] as const
 export type UserWorkType = typeof USER_WORK_TYPES[number]
+
+export const ROOM_TYPES = ['rum', 'toalett', 'kok', 'badrum', 'hall', 'vardagsrum', 'sovrum'] as const
+export type RoomType = typeof ROOM_TYPES[number]
