@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useNavigate } from 'react-router-dom'
 import { authFetch } from '../api'
 import { USER_WORK_TYPES, type UserWorkType } from '../types/constants'
 import './Users.css'
@@ -24,6 +25,7 @@ function generatePassword(): string {
 
 export default function Users({ role }: { role: string }) {
   const { t } = useTranslation()
+  const navigate = useNavigate()
   const isAdmin = role === 'admin'
   const [users, setUsers] = useState<User[]>([])
   const [modal, setModal] = useState<'add' | 'edit' | 'delete' | null>(null)
@@ -119,7 +121,7 @@ export default function Users({ role }: { role: string }) {
             </thead>
             <tbody>
               {users.map(u => (
-                <tr key={u.id}>
+                <tr key={u.id} className={isAdmin ? 'tr-clickable' : ''} onClick={isAdmin ? () => navigate(`/dashboard/users/${u.id}/work`) : undefined}>
                   <td>{[u.first_name, u.last_name].filter(Boolean).join(' ') || '—'}</td>
                   <td className="td-muted">{u.username}</td>
                   <td className="td-muted">{u.email || '—'}</td>
@@ -133,7 +135,7 @@ export default function Users({ role }: { role: string }) {
                     </div>
                   </td>
                   {isAdmin && (
-                    <td className="td-actions">
+                    <td className="td-actions" onClick={e => e.stopPropagation()}>
                       <button className="row-btn" onClick={() => openEdit(u)}>✎</button>
                       <button className="row-btn row-btn-danger" onClick={() => openDelete(u)}>✕</button>
                     </td>

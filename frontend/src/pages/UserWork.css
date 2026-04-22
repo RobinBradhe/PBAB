@@ -1,0 +1,46 @@
+.work-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.back-btn {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 4px 10px;
+  cursor: pointer;
+  font-size: 16px;
+  color: var(--text-secondary);
+  line-height: 1;
+}
+
+.back-btn:hover {
+  background: var(--bg-hover);
+}
+
+.work-content {
+  padding: 24px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.work-project-section {
+  margin: 0;
+}
+
+.work-project-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 10px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+}
+
+.work-totals {
+  margin-top: 8px;
+  padding-top: 16px;
+  border-top: 2px solid var(--border);
+}

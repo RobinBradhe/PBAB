@@ -16,7 +16,7 @@ import {
 import { CSS } from '@dnd-kit/utilities'
 import React from 'react'
 import { WORK_TYPES } from '../../types/constants'
-import type { Price, Room, TextBlock, PriceData, ListItem } from '../../types/interface'
+import type { Price, Room, TextBlock, PriceData, ListItem, User } from '../../types/interface'
 
 function renderText(text: string) {
   const lines = text.split('\n')
@@ -63,13 +63,14 @@ function itemKey(item: ListItem) {
   return `${item.kind}-${item.data.id}`
 }
 
-const emptyPriceForm = { work_type: WORK_TYPES[0] as string, hours: '', rate: '', include_vat: false }
+const emptyPriceForm = { work_type: WORK_TYPES[0] as string, hours: '', rate: '', include_vat: false, user_id: null as number | null }
 
 function SortableRoomCard({
-  room, isAdmin, t, onEdit, onDelete, onAddPrice, onUpdatePrice, onDeletePrice,
+  room, isAdmin, users, t, onEdit, onDelete, onAddPrice, onUpdatePrice, onDeletePrice,
 }: {
   room: Room
   isAdmin: boolean
+  users: User[]
   t: (k: string) => string
   onEdit: (r: Room) => void
   onDelete: (r: Room) => void
@@ -87,7 +88,7 @@ function SortableRoomCard({
   function startEdit(p: Price) {
     setEditPriceId(p.id)
     setShowAdd(false)
-    setPriceForm({ work_type: p.work_type, hours: String(p.hours), rate: String(p.rate), include_vat: p.include_vat })
+    setPriceForm({ work_type: p.work_type, hours: String(p.hours), rate: String(p.rate), include_vat: p.include_vat, user_id: p.user_id })
   }
 
   function startAdd() {
@@ -98,13 +99,13 @@ function SortableRoomCard({
 
   async function saveAdd() {
     if (!priceForm.hours || !priceForm.rate) return
-    await onAddPrice(room.id, { work_type: priceForm.work_type, hours: Number(priceForm.hours), rate: Number(priceForm.rate), include_vat: priceForm.include_vat })
+    await onAddPrice(room.id, { work_type: priceForm.work_type, hours: Number(priceForm.hours), rate: Number(priceForm.rate), include_vat: priceForm.include_vat, user_id: priceForm.user_id })
     setShowAdd(false)
   }
 
   async function saveEdit() {
     if (editPriceId == null || !priceForm.hours || !priceForm.rate) return
-    await onUpdatePrice(room.id, editPriceId, { work_type: priceForm.work_type, hours: Number(priceForm.hours), rate: Number(priceForm.rate), include_vat: priceForm.include_vat })
+    await onUpdatePrice(room.id, editPriceId, { work_type: priceForm.work_type, hours: Number(priceForm.hours), rate: Number(priceForm.rate), include_vat: priceForm.include_vat, user_id: priceForm.user_id })
     setEditPriceId(null)
   }
 
@@ -140,6 +141,16 @@ function SortableRoomCard({
         <div className="room-prices">
           {room.prices.length > 0 && (
             <table className="price-table">
+              <thead>
+                <tr>
+                  <th>{t('rooms.prices.colWorkType')}</th>
+                  <th>{t('rooms.prices.colTime')}</th>
+                  <th>{t('rooms.prices.colTotal')}</th>
+                  <th>{t('rooms.prices.colVat')}</th>
+                  <th className="price-col-worker">{t('rooms.prices.colWorker')}</th>
+                  {isAdmin && <th />}
+                </tr>
+              </thead>
               <tbody>
                 {room.prices.map(p =>
                   editPriceId === p.id ? (
@@ -161,6 +172,12 @@ function SortableRoomCard({
                               onChange={e => setPriceForm(prev => ({ ...prev, include_vat: e.target.checked }))} />
                             Moms
                           </label>
+                          <select aria-label="Användare" name="user_id" className="price-form-input price-form-select"
+                            value={priceForm.user_id ?? ''}
+                            onChange={e => setPriceForm(prev => ({ ...prev, user_id: e.target.value ? Number(e.target.value) : null }))}>
+                            <option value="">—</option>
+                            {users.map(u => <option key={u.id} value={u.id}>{u.first_name && u.last_name ? `${u.first_name} ${u.last_name}` : u.username}</option>)}
+                          </select>
                           <div className="price-form-actions">
                             <button className="save-btn price-form-btn" onClick={saveEdit}>✓</button>
                             <button className="cancel-btn price-form-btn" onClick={() => setEditPriceId(null)}>✕</button>
@@ -174,6 +191,7 @@ function SortableRoomCard({
                       <td className="price-formula">{p.hours}h × {p.rate.toLocaleString('sv-SE')} kr/h</td>
                       <td className="price-total">{fmt(p.hours * p.rate)}</td>
                       <td>{p.include_vat && <span className="price-vat-badge">moms</span>}</td>
+                      <td className="price-user">{p.user_id ? (() => { const u = users.find(u => u.id === p.user_id); return u ? (u.first_name && u.last_name ? `${u.first_name} ${u.last_name}` : u.username) : null })() : null}</td>
                       {isAdmin && (
                         <td className="price-actions">
                           <button className="row-btn" onClick={() => startEdit(p)}>✎</button>
@@ -218,6 +236,12 @@ function SortableRoomCard({
                   onChange={e => setPriceForm(prev => ({ ...prev, include_vat: e.target.checked }))} />
                 Moms
               </label>
+              <select aria-label="Användare" name="user_id" className="price-form-input price-form-select"
+                value={priceForm.user_id ?? ''}
+                onChange={e => setPriceForm(prev => ({ ...prev, user_id: e.target.value ? Number(e.target.value) : null }))}>
+                <option value="">—</option>
+                {users.map(u => <option key={u.id} value={u.id}>{u.first_name && u.last_name ? `${u.first_name} ${u.last_name}` : u.username}</option>)}
+              </select>
               <div className="price-form-actions">
                 <button className="save-btn price-form-btn" onClick={saveAdd}>✓</button>
                 <button className="cancel-btn price-form-btn" onClick={() => setShowAdd(false)}>✕</button>
@@ -307,6 +331,7 @@ function SortableTextBlock({
 interface Props {
   items: ListItem[]
   isAdmin: boolean
+  users: User[]
   onDragEnd: (event: DragEndEvent) => void
   onEditRoom: (r: Room) => void
   onDeleteRoom: (r: Room) => void
@@ -318,7 +343,7 @@ interface Props {
 }
 
 export default function ProjectBody({
-  items, isAdmin, onDragEnd, onEditRoom, onDeleteRoom,
+  items, isAdmin, users, onDragEnd, onEditRoom, onDeleteRoom,
   onAddPrice, onUpdatePrice, onDeletePrice, onDeleteTextBlock, onSaveTextBlock,
 }: Props) {
   const { t } = useTranslation()
@@ -337,6 +362,7 @@ export default function ProjectBody({
               key={itemKey(item)}
               room={item.data}
               isAdmin={isAdmin}
+              users={users}
               t={t}
               onEdit={onEditRoom}
               onDelete={onDeleteRoom}

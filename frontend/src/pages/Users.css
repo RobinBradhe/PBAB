@@ -1,3 +1,11 @@
+.tr-clickable {
+  cursor: pointer;
+}
+
+.tr-clickable:hover td {
+  background: var(--bg-hover);
+}
+
 .users-body {
   padding: 28px 32px;
   overflow-x: auto;

@@ -4,6 +4,7 @@ import Interface from './pages/Interface'
 import Users from './pages/Users'
 import Projects from './pages/Projects'
 import ProjectDetail from './pages/ProjectDetail'
+import UserWork from './pages/UserWork'
 import { LANGUAGES, type Theme } from './types/constants'
 import './Dashboard.css'
 
@@ -57,6 +58,7 @@ export default function Dashboard({ username, role, onLogout, currentTheme, onTh
         <Route path="/projects" element={<Projects role={role} />} />
         <Route path="/projects/:id" element={<ProjectDetail role={role} />} />
         <Route path="/users" element={<Users role={role} />} />
+        <Route path="/users/:id/work" element={<UserWork />} />
         <Route path="/interface" element={<Interface currentTheme={currentTheme} onThemeChange={onThemeChange} />} />
       </Routes>
     </div>

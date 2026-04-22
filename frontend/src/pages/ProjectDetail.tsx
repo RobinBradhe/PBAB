@@ -3,10 +3,10 @@ import { useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { arrayMove } from '@dnd-kit/sortable'
 import type { DragEndEvent } from '@dnd-kit/core'
-import { EmptyRoomForm, type Project, type Room, type TextBlock, type ListItem, type PriceData } from '../types/interface'
+import { EmptyRoomForm, type Project, type Room, type TextBlock, type ListItem, type PriceData, type User } from '../types/interface'
 import { WORK_TYPES, type WorkType, ROOM_TYPES } from '../types/constants'
 import {
-  fetchProjectAll, createRoom, updateRoom, deleteRoom,
+  fetchProjectAll, fetchUsers, createRoom, updateRoom, deleteRoom,
   createTextBlock, updateTextBlock, deleteTextBlock,
   addPrice, updatePrice, deletePrice, reorderItems,
 } from '../api/projects'
@@ -24,6 +24,7 @@ export default function ProjectDetail({ role }: { role: string }) {
 
   const [project, setProject] = useState<Project | null>(null)
   const [items, setItems] = useState<ListItem[]>([])
+  const [users, setUsers] = useState<User[]>([])
   const [modal, setModal] = useState<'add' | 'edit' | 'delete' | null>(null)
   const [selected, setSelected] = useState<Room | null>(null)
   const [roomForm, setRoomForm] = useState<RoomFormState>(EmptyRoomForm)
@@ -31,9 +32,10 @@ export default function ProjectDetail({ role }: { role: string }) {
   useEffect(() => { refresh() }, [id])
 
   async function refresh() {
-    const result = await fetchProjectAll(id!)
+    const [result, userList] = await Promise.all([fetchProjectAll(id!), fetchUsers()])
     setProject(result.project)
     setItems(result.items)
+    setUsers(userList)
   }
 
   function openAdd() { setRoomForm(EmptyRoomForm); setModal('add') }
@@ -126,6 +128,7 @@ export default function ProjectDetail({ role }: { role: string }) {
         <ProjectBody
           items={items}
           isAdmin={isAdmin}
+          users={users}
           onDragEnd={handleDragEnd}
           onEditRoom={openEdit}
           onDeleteRoom={openDeleteRoom}

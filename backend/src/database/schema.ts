@@ -75,6 +75,7 @@ function migratePrices() {
     rate        REAL NOT NULL,
     include_vat INTEGER NOT NULL DEFAULT 0
   )`)
+  try { db.exec(`ALTER TABLE prices ADD COLUMN user_id INTEGER REFERENCES users(id) ON DELETE SET NULL`) } catch {}
 }
 
 function migrateUsers() {

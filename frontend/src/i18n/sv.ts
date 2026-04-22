@@ -56,6 +56,11 @@ export default {
     noRooms: 'Inga rum har lagts till ännu.',
     prices: {
       addPrice: 'Lägg till pris',
+      colWorkType: 'Arbetstyp',
+      colTime: 'Tid',
+      colTotal: 'Summa',
+      colVat: 'Moms',
+      colWorker: 'Utförare',
     },
     addTextBlock: 'Lägg till text',
     textBlockPlaceholder: 'Skriv något...',
@@ -75,6 +80,12 @@ export default {
       vvs: 'VVS',
       project_manager: 'Projektledare',
     },
+  },
+  work: {
+    pageTitle: 'Arbete',
+    noWork: 'Inga arbeten registrerade.',
+    totalHours: 'Totalt timmar',
+    totalSum: 'Totalt',
   },
   projects: {
     pageTitle: 'Projekt',

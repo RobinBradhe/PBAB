@@ -1,5 +1,5 @@
 import { authFetch } from '../api'
-import type { Project, Room, TextBlock, PriceData, ListItem } from '../types/interface'
+import type { Project, Room, TextBlock, PriceData, ListItem, User } from '../types/interface'
 import type { WorkType } from '../types/constants'
 
 export type RoomFormData = { room_type: string; work_types: WorkType[]; notes: string }
@@ -83,4 +83,9 @@ export async function reorderItems(projectId: number, items: Array<{ type: strin
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ items }),
     })
+}
+
+export async function fetchUsers(): Promise<User[]> {
+    const res = await authFetch('/users')
+    return res.json()
 }

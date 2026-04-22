@@ -20,6 +20,7 @@ type PriceRow = {
   hours: number
   rate: number
   include_vat: number
+  user_id: number | null
 }
 
 router.get('/', requireAuth, (req: AuthRequest, res: Response) => {
@@ -63,19 +64,19 @@ router.delete('/:id', requireAdmin, (req: AuthRequest, res: Response) => {
 })
 
 router.post('/:id/prices', requireAdmin, (req: AuthRequest, res: Response) => {
-  const { work_type, hours, rate, include_vat = false } = req.body
+  const { work_type, hours, rate, include_vat = false, user_id = null } = req.body
   if (!work_type || hours == null || rate == null) { res.status(400).json({ error: 'work_type, hours, and rate are required' }); return }
-  const result = db.prepare('INSERT INTO prices (room_id, work_type, hours, rate, include_vat) VALUES (?, ?, ?, ?, ?)')
-    .run(req.params.id, work_type, hours, rate, include_vat ? 1 : 0)
-  res.status(201).json({ id: result.lastInsertRowid, room_id: Number(req.params.id), work_type, hours, rate, include_vat })
+  const result = db.prepare('INSERT INTO prices (room_id, work_type, hours, rate, include_vat, user_id) VALUES (?, ?, ?, ?, ?, ?)')
+    .run(req.params.id, work_type, hours, rate, include_vat ? 1 : 0, user_id)
+  res.status(201).json({ id: result.lastInsertRowid, room_id: Number(req.params.id), work_type, hours, rate, include_vat, user_id })
 })
 
 router.put('/:id/prices/:priceId', requireAdmin, (req: AuthRequest, res: Response) => {
-  const { work_type, hours, rate, include_vat = false } = req.body
+  const { work_type, hours, rate, include_vat = false, user_id = null } = req.body
   if (!work_type || hours == null || rate == null) { res.status(400).json({ error: 'work_type, hours, and rate are required' }); return }
-  db.prepare('UPDATE prices SET work_type = ?, hours = ?, rate = ?, include_vat = ? WHERE id = ? AND room_id = ?')
-    .run(work_type, hours, rate, include_vat ? 1 : 0, req.params.priceId, req.params.id)
-  res.json({ id: Number(req.params.priceId), room_id: Number(req.params.id), work_type, hours, rate, include_vat })
+  db.prepare('UPDATE prices SET work_type = ?, hours = ?, rate = ?, include_vat = ?, user_id = ? WHERE id = ? AND room_id = ?')
+    .run(work_type, hours, rate, include_vat ? 1 : 0, user_id, req.params.priceId, req.params.id)
+  res.json({ id: Number(req.params.priceId), room_id: Number(req.params.id), work_type, hours, rate, include_vat, user_id })
 })
 
 router.delete('/:id/prices/:priceId', requireAdmin, (req: AuthRequest, res: Response) => {

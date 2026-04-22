@@ -51,4 +51,24 @@ router.delete('/:id', requireAdmin, (req: AuthRequest, res: Response) => {
   res.json({ ok: true })
 })
 
+type WorkRow = {
+  id: number; work_type: string; hours: number; rate: number; include_vat: number
+  room_id: number; room_type: string
+  project_id: number; project_name: string
+}
+
+router.get('/:id/work', requireAdmin, (req: AuthRequest, res: Response) => {
+  const rows = db.prepare(`
+    SELECT p.id, p.work_type, p.hours, p.rate, p.include_vat,
+           r.id as room_id, r.room_type,
+           proj.id as project_id, proj.name as project_name
+    FROM prices p
+    JOIN rooms r ON p.room_id = r.id
+    JOIN projects proj ON r.project_id = proj.id
+    WHERE p.user_id = ?
+    ORDER BY proj.id, r.sort_order
+  `).all(req.params.id) as WorkRow[]
+  res.json(rows.map(r => ({ ...r, include_vat: Boolean(r.include_vat) })))
+})
+
 export default router

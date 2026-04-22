@@ -1,5 +1,12 @@
 import type { WorkType } from './constants'
 
+export interface User {
+    id: number
+    username: string
+    first_name: string | null
+    last_name: string | null
+}
+
 export interface Price {
     id: number
     room_id: number
@@ -7,6 +14,7 @@ export interface Price {
     hours: number
     rate: number
     include_vat: boolean
+    user_id: number | null
 }
 
 export interface Room {
@@ -36,7 +44,7 @@ export interface Project {
     image: string | null
 }
 
-export type PriceData = { work_type: string; hours: number; rate: number; include_vat: boolean }
+export type PriceData = { work_type: string; hours: number; rate: number; include_vat: boolean; user_id: number | null }
 
 export type ListItem = { kind: 'room'; data: Room } | { kind: 'text'; data: TextBlock }
 
