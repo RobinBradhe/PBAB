@@ -16,7 +16,7 @@ import {
   arrayMove,
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { authFetch } from '../api'
+import { authFetch, UPLOADS_URL } from '../api'
 import { WORK_TYPES, type WorkType } from '../constants'
 import './ProjectDetail.css'
 
@@ -47,6 +47,7 @@ interface Project {
   zip_code: string | null
   city: string | null
   sqm_total: number | null
+  image: string | null
 }
 
 const emptyRoomForm = { room_type: 'rum', work_types: [] as WorkType[], notes: '' }
@@ -264,10 +265,15 @@ export default function ProjectDetail({ role }: { role: string }) {
 
       {project && (
         <div className="project-meta">
-          {project.address && <span>{project.address}</span>}
-          {project.zip_code && <span>{project.zip_code}</span>}
-          {project.city && <span>{project.city}</span>}
-          {project.sqm_total != null && <span>{project.sqm_total} m²</span>}
+          {project.image && (
+            <img src={`${UPLOADS_URL}/${project.image}`} alt="" className="project-detail-image" />
+          )}
+          <div className="project-meta-fields">
+            {project.address && <span>{project.address}</span>}
+            {project.zip_code && <span>{project.zip_code}</span>}
+            {project.city && <span>{project.city}</span>}
+            {project.sqm_total != null && <span>{project.sqm_total} m²</span>}
+          </div>
         </div>
       )}
 

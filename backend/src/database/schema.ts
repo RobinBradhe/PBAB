@@ -46,8 +46,13 @@ export function initSchema() {
   `)
 
   migrateUsers()
+  migrateProjects()
   seedDefaultUsers()
   seedDefaultSettings()
+}
+
+function migrateProjects() {
+  try { db.exec(`ALTER TABLE projects ADD COLUMN image TEXT`) } catch {}
 }
 
 function migrateUsers() {

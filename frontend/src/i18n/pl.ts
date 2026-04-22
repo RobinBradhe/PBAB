@@ -84,6 +84,7 @@ export default {
     zipCode: 'Kod pocztowy',
     city: 'Obszar / Miasto',
     sqmTotal: 'Metry kwadratowe (łącznie)',
+    image: 'Zdjęcie',
     save: 'Zapisz',
     cancel: 'Anuluj',
     delete: 'Usuń',

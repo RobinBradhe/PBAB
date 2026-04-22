@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
-import { authFetch } from '../api'
+import { authFetch, UPLOADS_URL } from '../api'
 import './Projects.css'
 
 interface Project {
@@ -11,6 +11,7 @@ interface Project {
   zip_code: string | null
   city: string | null
   sqm_total: number | null
+  image: string | null
 }
 
 const emptyForm = { name: '', address: '', zip_code: '', city: '', sqm_total: '' }
@@ -23,6 +24,7 @@ export default function Projects({ role }: { role: string }) {
   const [modal, setModal] = useState<'add' | 'edit' | 'delete' | null>(null)
   const [selected, setSelected] = useState<Project | null>(null)
   const [form, setForm] = useState(emptyForm)
+  const [imageFile, setImageFile] = useState<File | null>(null)
 
   useEffect(() => { fetchProjects() }, [])
 
@@ -33,6 +35,7 @@ export default function Projects({ role }: { role: string }) {
 
   function openAdd() {
     setForm(emptyForm)
+    setImageFile(null)
     setModal('add')
   }
 
@@ -45,6 +48,7 @@ export default function Projects({ role }: { role: string }) {
       city: project.city ?? '',
       sqm_total: project.sqm_total != null ? String(project.sqm_total) : '',
     })
+    setImageFile(null)
     setModal('edit')
   }
 
@@ -57,8 +61,8 @@ export default function Projects({ role }: { role: string }) {
 
   async function handleSave() {
     const method = modal === 'add' ? 'POST' : 'PUT'
-    const path = modal === 'add' ? '/projects' : `/projects/${selected!.id}`
-    await authFetch(path, {
+    const urlPath = modal === 'add' ? '/projects' : `/projects/${selected!.id}`
+    const res = await authFetch(urlPath, {
       method,
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -66,6 +70,13 @@ export default function Projects({ role }: { role: string }) {
         sqm_total: form.sqm_total !== '' ? Number(form.sqm_total) : null,
       }),
     })
+    if (imageFile) {
+      const project = await res.json()
+      const projectId = modal === 'add' ? project.id : selected!.id
+      const fd = new FormData()
+      fd.append('image', imageFile)
+      await authFetch(`/projects/${projectId}/image`, { method: 'POST', body: fd })
+    }
     await fetchProjects()
     closeModal()
   }
@@ -93,6 +104,7 @@ export default function Projects({ role }: { role: string }) {
           <table className="projects-table">
             <thead>
               <tr>
+                <th></th>
                 <th>{t('projects.name')}</th>
                 <th>{t('projects.address')}</th>
                 <th>{t('projects.zipCode')}</th>
@@ -104,6 +116,11 @@ export default function Projects({ role }: { role: string }) {
             <tbody>
               {projects.map(p => (
                 <tr key={p.id}>
+                  <td className="td-thumb">
+                    {p.image
+                      ? <img src={`${UPLOADS_URL}/${p.image}`} alt="" className="project-thumb" />
+                      : <div className="project-thumb-placeholder" />}
+                  </td>
                   <td><button className="project-link" onClick={() => navigate(`/dashboard/projects/${p.id}`)}>{p.name}</button></td>
                   <td className="td-muted">{p.address || '—'}</td>
                   <td className="td-muted">{p.zip_code || '—'}</td>
@@ -149,6 +166,14 @@ export default function Projects({ role }: { role: string }) {
               <div className="form-field">
                 <label className="form-label">{t('projects.sqmTotal')}</label>
                 <input className="form-input" type="number" min="0" value={form.sqm_total} onChange={f('sqm_total')} />
+              </div>
+              <div className="form-field form-field-full">
+                <label className="form-label">{t('projects.image')}</label>
+                {modal === 'edit' && selected?.image && !imageFile && (
+                  <img src={`${UPLOADS_URL}/${selected.image}`} alt="" className="modal-image-preview" />
+                )}
+                <input className="form-input" type="file" accept="image/*"
+                  onChange={e => setImageFile(e.target.files?.[0] ?? null)} />
               </div>
             </div>
             <div className="modal-actions">

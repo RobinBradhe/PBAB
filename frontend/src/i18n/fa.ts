@@ -84,6 +84,7 @@ export default {
     zipCode: 'کد پستی',
     city: 'منطقه / شهر',
     sqmTotal: 'متر مربع (کل)',
+    image: 'تصویر',
     save: 'ذخیره',
     cancel: 'لغو',
     delete: 'حذف',

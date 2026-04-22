@@ -24,11 +24,28 @@
 
 .project-meta {
   display: flex;
+  align-items: flex-start;
   gap: 20px;
   padding: 0 32px 20px;
   color: var(--text-secondary);
   font-size: 13px;
   border-bottom: 1px solid var(--border);
+}
+
+.project-detail-image {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 8px;
+  flex-shrink: 0;
+  border: 1px solid var(--border);
+}
+
+.project-meta-fields {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+  align-items: center;
 }
 
 .rooms-body {

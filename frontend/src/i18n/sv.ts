@@ -84,6 +84,7 @@ export default {
     zipCode: 'Postnummer',
     city: 'Område / Stad',
     sqmTotal: 'Kvadratmeter (totalt)',
+    image: 'Bild',
     save: 'Spara',
     cancel: 'Avbryt',
     delete: 'Ta bort',

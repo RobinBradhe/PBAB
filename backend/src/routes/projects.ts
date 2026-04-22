@@ -1,6 +1,21 @@
 import { Router, Response } from 'express'
+import path from 'path'
+import fs from 'fs'
+import multer from 'multer'
 import db from '../database/db'
 import { requireAuth, requireAdmin, AuthRequest } from '../middleware/auth'
+
+const UPLOADS_DIR = path.join(process.cwd(), 'uploads')
+if (!fs.existsSync(UPLOADS_DIR)) fs.mkdirSync(UPLOADS_DIR, { recursive: true })
+
+const storage = multer.diskStorage({
+  destination: (_req, _file, cb) => cb(null, UPLOADS_DIR),
+  filename: (_req, file, cb) => {
+    const ext = path.extname(file.originalname)
+    cb(null, `project-${Date.now()}${ext}`)
+  },
+})
+const upload = multer({ storage, limits: { fileSize: 10 * 1024 * 1024 } })
 
 const router = Router()
 
@@ -11,6 +26,7 @@ type ProjectRow = {
   zip_code: string | null
   city: string | null
   sqm_total: number | null
+  image: string | null
   created_at: string
 }
 
@@ -39,8 +55,24 @@ router.put('/:id', requireAdmin, (req: AuthRequest, res: Response) => {
 })
 
 router.delete('/:id', requireAdmin, (req: AuthRequest, res: Response) => {
+  const project = db.prepare('SELECT image FROM projects WHERE id = ?').get(req.params.id) as ProjectRow | undefined
+  if (project?.image) {
+    const filePath = path.join(UPLOADS_DIR, project.image)
+    if (fs.existsSync(filePath)) fs.unlinkSync(filePath)
+  }
   db.prepare('DELETE FROM projects WHERE id = ?').run(req.params.id)
   res.json({ ok: true })
+})
+
+router.post('/:id/image', requireAdmin, upload.single('image'), (req: AuthRequest, res: Response) => {
+  if (!req.file) { res.status(400).json({ error: 'No file uploaded' }); return }
+  const project = db.prepare('SELECT image FROM projects WHERE id = ?').get(req.params.id) as ProjectRow | undefined
+  if (project?.image) {
+    const oldPath = path.join(UPLOADS_DIR, project.image)
+    if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath)
+  }
+  db.prepare('UPDATE projects SET image = ? WHERE id = ?').run(req.file.filename, req.params.id)
+  res.json({ image: req.file.filename })
 })
 
 // Reorder rooms + text_blocks together within a project

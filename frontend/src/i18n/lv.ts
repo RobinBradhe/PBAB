@@ -84,6 +84,7 @@ export default {
     zipCode: 'Pasta indekss',
     city: 'Rajons / Pilsēta',
     sqmTotal: 'Kvadrātmetri (kopā)',
+    image: 'Attēls',
     save: 'Saglabāt',
     cancel: 'Atcelt',
     delete: 'Dzēst',

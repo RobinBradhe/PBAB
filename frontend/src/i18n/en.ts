@@ -84,6 +84,7 @@ export default {
     zipCode: 'Zip code',
     city: 'Area / City',
     sqmTotal: 'Square meters (total)',
+    image: 'Image',
     save: 'Save',
     cancel: 'Cancel',
     delete: 'Delete',
